@@ -9,7 +9,7 @@ import { ResponseDto } from "../shared/dto/response.dto";
 
 import { UpdateDto } from "./dto/update.dto";
 
-import { User } from "./user.entity";
+import { User } from "./entities/user.entity";
 import { SafeUser } from "../shared/types/safe-user.type";
 import { Role } from "../shared/enums/role.enum";
 

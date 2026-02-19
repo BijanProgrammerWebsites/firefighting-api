@@ -16,7 +16,7 @@ import * as bcrypt from "bcrypt";
 
 import { ResponseDto } from "../shared/dto/response.dto";
 
-import { User } from "../users/user.entity";
+import { User } from "../users/entities/user.entity";
 
 import { SignUpDto } from "./dto/sign-up.dto";
 import { SignInDto } from "./dto/sign-in.dto";

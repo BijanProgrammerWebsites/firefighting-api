@@ -5,7 +5,7 @@ import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 
 import { UpdateDto } from "./dto/update.dto";
 
-import { User } from "./user.entity";
+import { User } from "./entities/user.entity";
 import { UsersService } from "./users.service";
 import { Roles } from "../auth/decorators/roles.decorator";
 import { Role } from "../shared/enums/role.enum";

@@ -1,45 +1,50 @@
 import {
-  Controller,
-  Get,
-  Post,
+  BadRequestException,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Patch,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
 } from "@nestjs/common";
 import { RefineryService } from "./refinery.service";
-import { CreateRefineryDto } from "./dto/create-refinery.dto";
 import { UpdateRefineryDto } from "./dto/update-refinery.dto";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { RolesGuard } from "../auth/guards/roles.guard";
+import { Roles } from "../auth/decorators/roles.decorator";
+import { Role } from "../shared/enums/role.enum";
 
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.ADMIN)
 @Controller("refinery")
 export class RefineryController {
   constructor(private readonly refineryService: RefineryService) {}
 
-  @Post()
-  create(@Body() createRefineryDto: CreateRefineryDto) {
-    return this.refineryService.create(createRefineryDto);
-  }
-
   @Get()
-  findAll() {
-    return this.refineryService.findAll();
+  findTheOnlyOne() {
+    return this.refineryService.findTheOnlyOne();
   }
 
-  @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.refineryService.findOne(+id);
+  @Patch()
+  updateTheOnlyOne(@Body() updateRefineryDto: UpdateRefineryDto) {
+    return this.refineryService.updateTheOnlyOne(updateRefineryDto);
   }
 
-  @Patch(":id")
-  update(
-    @Param("id") id: string,
-    @Body() updateRefineryDto: UpdateRefineryDto,
-  ) {
-    return this.refineryService.update(+id, updateRefineryDto);
+  @Patch("picture")
+  @UseInterceptors(FileInterceptor("picture"))
+  async updatePicture(@UploadedFile() file: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException("No file uploaded");
+    }
+
+    return this.refineryService.updatePicture(file.path);
   }
 
-  @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.refineryService.remove(+id);
+  @Delete("picture")
+  async removePicture() {
+    return this.refineryService.removePicture();
   }
 }

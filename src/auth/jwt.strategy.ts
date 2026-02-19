@@ -9,7 +9,7 @@ import { Repository } from "typeorm";
 
 import { ExtractJwt, Strategy } from "passport-jwt";
 
-import { User } from "../users/user.entity";
+import { User } from "../users/entities/user.entity";
 
 import { JwtPayloadType } from "./types/jwt-payload.type";
 

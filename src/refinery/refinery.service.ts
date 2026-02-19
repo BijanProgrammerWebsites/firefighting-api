@@ -1,26 +1,50 @@
 import { Injectable } from "@nestjs/common";
-import { CreateRefineryDto } from "./dto/create-refinery.dto";
 import { UpdateRefineryDto } from "./dto/update-refinery.dto";
+import { ResponseDto } from "../shared/dto/response.dto";
+import { Refinery } from "./entities/refinery.entity";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
 
 @Injectable()
 export class RefineryService {
-  create(createRefineryDto: CreateRefineryDto) {
-    return "This action adds a new refinery";
+  public constructor(
+    @InjectRepository(Refinery)
+    private refineryRepository: Repository<Refinery>,
+  ) {}
+
+  async findTheOnlyOne(): Promise<ResponseDto<Refinery>> {
+    const [refinery] = await this.refineryRepository.find();
+
+    return {
+      message: "Refinery found successfully.",
+      result: refinery,
+    };
   }
 
-  findAll() {
-    return `This action returns all refinery`;
+  async updateTheOnlyOne(dto: UpdateRefineryDto): Promise<ResponseDto> {
+    const [refinery] = await this.refineryRepository.find();
+
+    await this.refineryRepository.update({ id: refinery.id }, dto);
+
+    return { message: "Refinery updated successfully." };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} refinery`;
+  async updatePicture(picture: string): Promise<ResponseDto> {
+    const [refinery] = await this.refineryRepository.find();
+
+    await this.refineryRepository.update({ id: refinery.id }, { picture });
+
+    return { message: "Refinery picture updated successfully." };
   }
 
-  update(id: number, updateRefineryDto: UpdateRefineryDto) {
-    return `This action updates a #${id} refinery`;
-  }
+  async removePicture(): Promise<ResponseDto> {
+    const [refinery] = await this.refineryRepository.find();
 
-  remove(id: number) {
-    return `This action removes a #${id} refinery`;
+    await this.refineryRepository.update(
+      { id: refinery.id },
+      { picture: null },
+    );
+
+    return { message: "Refinery picture removed successfully." };
   }
 }

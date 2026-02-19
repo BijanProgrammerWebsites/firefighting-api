@@ -1,4 +1,10 @@
-import { PartialType } from "@nestjs/mapped-types";
-import { CreateRefineryDto } from "./create-refinery.dto";
+import { IsOptional, IsString, MinLength } from "class-validator";
+import { Trim } from "../../shared/decorators/trim.decorator";
 
-export class UpdateRefineryDto extends PartialType(CreateRefineryDto) {}
+export class UpdateRefineryDto {
+  @IsOptional()
+  @IsString()
+  @Trim()
+  @MinLength(1)
+  name?: string;
+}

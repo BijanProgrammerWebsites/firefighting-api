@@ -13,7 +13,7 @@ import { JwtService } from "@nestjs/jwt";
 
 import type { Request, Response } from "express";
 
-import { User } from "../users/user.entity";
+import { User } from "../users/entities/user.entity";
 
 import { GetUser } from "./decorators/get-user.decorator";
 
