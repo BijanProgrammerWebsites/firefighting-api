@@ -6,37 +6,44 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { ZonesService } from "./zones.service";
 import { CreateZoneDto } from "./dto/create-zone.dto";
 import { UpdateZoneDto } from "./dto/update-zone.dto";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { RolesGuard } from "../auth/guards/roles.guard";
+import { Roles } from "../auth/decorators/roles.decorator";
+import { Role } from "../shared/enums/role.enum";
 
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.ADMIN)
 @Controller("zones")
 export class ZonesController {
   constructor(private readonly zonesService: ZonesService) {}
 
   @Post()
-  create(@Body() createZoneDto: CreateZoneDto) {
-    return this.zonesService.create(createZoneDto);
+  public create(@Body() dto: CreateZoneDto) {
+    return this.zonesService.create(dto);
   }
 
   @Get()
-  findAll() {
+  public findAll() {
     return this.zonesService.findAll();
   }
 
   @Get(":id")
-  findOne(@Param("id") id: string) {
+  public findOne(@Param("id") id: string) {
     return this.zonesService.findOne(+id);
   }
 
   @Patch(":id")
-  update(@Param("id") id: string, @Body() updateZoneDto: UpdateZoneDto) {
-    return this.zonesService.update(+id, updateZoneDto);
+  public update(@Param("id") id: string, @Body() dto: UpdateZoneDto) {
+    return this.zonesService.update(+id, dto);
   }
 
   @Delete(":id")
-  remove(@Param("id") id: string) {
+  public remove(@Param("id") id: string) {
     return this.zonesService.remove(+id);
   }
 }

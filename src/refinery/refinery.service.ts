@@ -9,11 +9,11 @@ import { Repository } from "typeorm";
 export class RefineryService {
   public constructor(
     @InjectRepository(Refinery)
-    private refineryRepository: Repository<Refinery>,
+    private refineryRepo: Repository<Refinery>,
   ) {}
 
-  async findTheOnlyOne(): Promise<ResponseDto<Refinery>> {
-    const [refinery] = await this.refineryRepository.find();
+  public async findTheOnlyOne(): Promise<ResponseDto<Refinery>> {
+    const [refinery] = await this.refineryRepo.find();
 
     return {
       message: "Refinery found successfully.",
@@ -21,29 +21,26 @@ export class RefineryService {
     };
   }
 
-  async updateTheOnlyOne(dto: UpdateRefineryDto): Promise<ResponseDto> {
-    const [refinery] = await this.refineryRepository.find();
+  public async updateTheOnlyOne(dto: UpdateRefineryDto): Promise<ResponseDto> {
+    const [refinery] = await this.refineryRepo.find();
 
-    await this.refineryRepository.update({ id: refinery.id }, dto);
+    await this.refineryRepo.update({ id: refinery.id }, dto);
 
     return { message: "Refinery updated successfully." };
   }
 
-  async updatePicture(picture: string): Promise<ResponseDto> {
-    const [refinery] = await this.refineryRepository.find();
+  public async updatePicture(picture: string): Promise<ResponseDto> {
+    const [refinery] = await this.refineryRepo.find();
 
-    await this.refineryRepository.update({ id: refinery.id }, { picture });
+    await this.refineryRepo.update({ id: refinery.id }, { picture });
 
     return { message: "Refinery picture updated successfully." };
   }
 
-  async removePicture(): Promise<ResponseDto> {
-    const [refinery] = await this.refineryRepository.find();
+  public async removePicture(): Promise<ResponseDto> {
+    const [refinery] = await this.refineryRepo.find();
 
-    await this.refineryRepository.update(
-      { id: refinery.id },
-      { picture: null },
-    );
+    await this.refineryRepo.update({ id: refinery.id }, { picture: null });
 
     return { message: "Refinery picture removed successfully." };
   }

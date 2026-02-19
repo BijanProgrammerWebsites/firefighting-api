@@ -24,18 +24,18 @@ export class RefineryController {
   constructor(private readonly refineryService: RefineryService) {}
 
   @Get()
-  findTheOnlyOne() {
+  public findTheOnlyOne() {
     return this.refineryService.findTheOnlyOne();
   }
 
   @Patch()
-  updateTheOnlyOne(@Body() updateRefineryDto: UpdateRefineryDto) {
-    return this.refineryService.updateTheOnlyOne(updateRefineryDto);
+  public updateTheOnlyOne(@Body() dto: UpdateRefineryDto) {
+    return this.refineryService.updateTheOnlyOne(dto);
   }
 
   @Patch("picture")
   @UseInterceptors(FileInterceptor("picture"))
-  async updatePicture(@UploadedFile() file: Express.Multer.File) {
+  public async updatePicture(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
       throw new BadRequestException("No file uploaded");
     }
@@ -44,7 +44,7 @@ export class RefineryController {
   }
 
   @Delete("picture")
-  async removePicture() {
+  public async removePicture() {
     return this.refineryService.removePicture();
   }
 }

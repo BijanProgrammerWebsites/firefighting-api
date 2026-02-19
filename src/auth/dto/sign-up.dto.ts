@@ -1,16 +1,16 @@
-import { IsEnum, IsString, MinLength } from "class-validator";
+import { IsEnum, IsNotEmpty, IsString } from "class-validator";
 import { Trim } from "../../shared/decorators/trim.decorator";
 import { Role } from "../../shared/enums/role.enum";
 
 export class SignUpDto {
   @IsString()
   @Trim()
-  @MinLength(1)
+  @IsNotEmpty()
   username: string;
 
   @IsString()
   @Trim()
-  @MinLength(1)
+  @IsNotEmpty()
   password: string;
 
   @IsEnum(Role)
