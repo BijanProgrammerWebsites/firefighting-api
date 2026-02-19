@@ -22,7 +22,7 @@ import { Unit } from "./units/entities/unit.entity";
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
       type: "postgres",
       host: process.env.DATABASE_HOST!,

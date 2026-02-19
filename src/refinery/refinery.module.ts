@@ -8,32 +8,36 @@ import { formatFilenamePrefix } from "../shared/utils/format.utils";
 import path from "node:path";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Refinery } from "./entities/refinery.entity";
+import { ConfigService } from "@nestjs/config";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Refinery]),
-    MulterModule.register({
-      storage: diskStorage({
-        destination: process.env.FILE_STORAGE_PATH!,
-        filename: (_req, file, cb) => {
-          const filename =
-            formatFilenamePrefix(new Date()) + "-" + crypto.randomUUID();
-          const fileExtension = path.extname(file.originalname);
-          const filenameWithExtension = filename + "." + fileExtension;
+    MulterModule.registerAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        storage: diskStorage({
+          destination: configService.get<string>("FILE_STORAGE_PATH"),
+          filename: (_req, file, cb) => {
+            const filename =
+              formatFilenamePrefix(new Date()) + "-" + crypto.randomUUID();
+            const fileExtension = path.extname(file.originalname);
+            const filenameWithExtension = filename + fileExtension;
 
-          cb(null, filenameWithExtension);
+            cb(null, filenameWithExtension);
+          },
+        }),
+        fileFilter: (_req, file, cb) => {
+          const allowed = /\.(jpg|jpeg|png|webp)$/i;
+
+          if (!file.originalname.match(allowed)) {
+            return cb(new Error("Only image files are allowed."), false);
+          }
+
+          cb(null, true);
         },
+        limits: { fileSize: 10 * 1024 * 1024 },
       }),
-      fileFilter: (_req, file, cb) => {
-        const allowed = /\.(jpg|jpeg|png|webp)$/i;
-
-        if (!file.originalname.match(allowed)) {
-          return cb(new Error("Only image files are allowed."), false);
-        }
-
-        cb(null, true);
-      },
-      limits: { fileSize: 10 * 1024 * 1024 },
     }),
   ],
   controllers: [RefineryController],

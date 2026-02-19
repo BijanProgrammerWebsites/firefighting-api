@@ -40,7 +40,7 @@ export class RefineryController {
       throw new BadRequestException("No file uploaded");
     }
 
-    return this.refineryService.updatePicture(file.path);
+    return this.refineryService.updatePicture(file.filename);
   }
 
   @Delete("picture")
