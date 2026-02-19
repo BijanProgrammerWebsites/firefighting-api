@@ -9,6 +9,6 @@ import { SitesModule } from "../sites/sites.module";
   imports: [TypeOrmModule.forFeature([Zone]), SitesModule],
   controllers: [ZonesController],
   providers: [ZonesService],
-  exports: [TypeOrmModule],
+  exports: [TypeOrmModule, ZonesService],
 })
 export class ZonesModule {}
