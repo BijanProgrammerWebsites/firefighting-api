@@ -7,9 +7,9 @@ import * as bcrypt from "bcrypt";
 
 import { ResponseDto } from "../shared/dto/response.dto";
 
-import { UpdateDto } from "./dto/update.dto";
+import { UpdateUserDto } from "./dto/update-user.dto";
 
-import { User } from "./user.entity";
+import { User } from "./entities/user.entity";
 import { SafeUser } from "../shared/types/safe-user.type";
 import { Role } from "../shared/enums/role.enum";
 
@@ -17,11 +17,11 @@ import { Role } from "../shared/enums/role.enum";
 export class UsersService {
   public constructor(
     @InjectRepository(User)
-    private userRepository: Repository<User>,
+    private userRepo: Repository<User>,
   ) {}
 
   public async findAllUsers(): Promise<ResponseDto<SafeUser[]>> {
-    const users = await this.userRepository.find();
+    const users = await this.userRepo.find();
 
     return {
       message: "User fetched successfully.",
@@ -40,7 +40,7 @@ export class UsersService {
     };
   }
 
-  public async update(user: User, dto: UpdateDto): Promise<ResponseDto> {
+  public async update(user: User, dto: UpdateUserDto): Promise<ResponseDto> {
     if (!(user.role === Role.ADMIN || user.id === dto.id)) {
       throw new UnauthorizedException("You cannot update this user.");
     }
@@ -50,7 +50,7 @@ export class UsersService {
       dto.password = await bcrypt.hash(dto.password, salt);
     }
 
-    await this.userRepository.update({ id: dto.id }, dto);
+    await this.userRepo.update({ id: dto.id }, dto);
 
     return { message: "User updated successfully." };
   }

@@ -16,7 +16,7 @@ import * as bcrypt from "bcrypt";
 
 import { ResponseDto } from "../shared/dto/response.dto";
 
-import { User } from "../users/user.entity";
+import { User } from "../users/entities/user.entity";
 
 import { SignUpDto } from "./dto/sign-up.dto";
 import { SignInDto } from "./dto/sign-in.dto";
@@ -27,7 +27,7 @@ import { JwtPayloadType } from "./types/jwt-payload.type";
 export class AuthService {
   public constructor(
     @InjectRepository(User)
-    private userRepository: Repository<User>,
+    private userRepo: Repository<User>,
     private jwtService: JwtService,
     private configService: ConfigService,
   ) {}
@@ -35,7 +35,7 @@ export class AuthService {
   public async signUp(dto: SignUpDto): Promise<ResponseDto> {
     const { username, password } = dto;
 
-    const foundUser = await this.userRepository.findOne({
+    const foundUser = await this.userRepo.findOne({
       where: { username },
     });
 
@@ -46,13 +46,13 @@ export class AuthService {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const user = this.userRepository.create({
+    const user = this.userRepo.create({
       ...dto,
       password: hashedPassword,
     });
 
     try {
-      await this.userRepository.save(user);
+      await this.userRepo.save(user);
 
       return { message: "Signed up successfully." };
     } catch {
@@ -63,7 +63,7 @@ export class AuthService {
   public async signIn(dto: SignInDto, res: Response): Promise<ResponseDto> {
     const { username, password } = dto;
 
-    const foundUser = await this.userRepository.findOne({
+    const foundUser = await this.userRepo.findOne({
       where: { username },
     });
 
@@ -82,7 +82,7 @@ export class AuthService {
   }
 
   public async signOut(userId: string, res: Response): Promise<ResponseDto> {
-    await this.userRepository.update(userId, { refreshToken: null });
+    await this.userRepo.update(userId, { refreshToken: null });
 
     this.clearCookies(res);
 
@@ -98,7 +98,7 @@ export class AuthService {
     refreshToken: string,
     res: Response,
   ): Promise<ResponseDto> {
-    const foundUser = await this.userRepository.findOne({
+    const foundUser = await this.userRepo.findOne({
       where: { id: userId },
     });
 
@@ -178,7 +178,7 @@ export class AuthService {
 
     const hashedRefreshToken = await bcrypt.hash(refreshToken, salt);
 
-    await this.userRepository.update(userId, {
+    await this.userRepo.update(userId, {
       refreshToken: hashedRefreshToken,
     });
   }

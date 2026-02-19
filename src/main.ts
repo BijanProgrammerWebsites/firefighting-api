@@ -12,9 +12,10 @@ import "reflect-metadata";
 import { AppModule } from "./app.module";
 
 import { ValidationExceptionFilter } from "./validation.filter";
+import { NestExpressApplication } from "@nestjs/platform-express";
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   app.enableCors({
     origin: true,
@@ -22,6 +23,8 @@ async function bootstrap() {
   });
 
   app.use(cookieParser());
+
+  app.useStaticAssets(process.env.FILE_STORAGE_PATH!, { prefix: "/pictures" });
 
   app.useGlobalPipes(
     new ValidationPipe({
