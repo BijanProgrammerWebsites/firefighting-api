@@ -6,5 +6,5 @@ export class UpdateRefineryDto {
   @IsString()
   @Trim()
   @MinLength(1)
-  name?: string;
+  title?: string;
 }

@@ -7,7 +7,7 @@ export class Refinery {
   id: string;
 
   @Column("text")
-  name: string;
+  title: string;
 
   @Column("text", { nullable: true })
   picture: string | null;

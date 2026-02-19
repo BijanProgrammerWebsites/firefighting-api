@@ -8,6 +8,6 @@ export class RefinerySeeder implements Seeder {
   async run(dataSource: DataSource) {
     const repo = dataSource.getRepository(Refinery);
     await repo.clear();
-    await repo.save([{ name: "Refinery", picture: null }]);
+    await repo.save([{ title: "Refinery", picture: null }]);
   }
 }
