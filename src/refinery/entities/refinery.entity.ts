@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Site } from "../../sites/entities/site.entity";
 
 @Entity()
 export class Refinery {
@@ -10,4 +11,7 @@ export class Refinery {
 
   @Column("text", { nullable: true })
   picture: string | null;
+
+  @OneToMany(() => Site, (site) => site.refinery)
+  sites: Site[];
 }
