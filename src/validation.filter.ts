@@ -15,7 +15,6 @@ export class ValidationExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const status = exception.getStatus();
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const validationErrors = exception.getResponse() as any;
 
     if (!validationErrors) {
@@ -25,7 +24,6 @@ export class ValidationExceptionFilter implements ExceptionFilter {
 
     const formattedErrors = {};
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
     validationErrors.message.forEach((error: string) => {
       const fieldMatch = error.match(/^([a-zA-Z0-9]+)/);
 
@@ -35,7 +33,6 @@ export class ValidationExceptionFilter implements ExceptionFilter {
         formattedErrors[field] = [];
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
       formattedErrors[field].push(error);
     });
 
