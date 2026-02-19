@@ -1,7 +1,17 @@
-import { IsOptional, IsString, MinLength } from "class-validator";
+import {
+  IsEnum,
+  IsOptional,
+  IsString,
+  IsUUID,
+  MinLength,
+} from "class-validator";
 import { Trim } from "../../shared/decorators/trim.decorator";
+import { Role } from "../../shared/enums/role.enum";
 
 export class UpdateDto {
+  @IsUUID()
+  id: string;
+
   @IsOptional()
   @IsString()
   @Trim()
@@ -13,4 +23,8 @@ export class UpdateDto {
   @Trim()
   @MinLength(1)
   password: string;
+
+  @IsOptional()
+  @IsEnum(Role)
+  role: Role;
 }

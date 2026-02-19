@@ -1,5 +1,9 @@
-import { HttpStatus, ValidationPipe } from "@nestjs/common";
-import { NestFactory } from "@nestjs/core";
+import {
+  ClassSerializerInterceptor,
+  HttpStatus,
+  ValidationPipe,
+} from "@nestjs/common";
+import { NestFactory, Reflector } from "@nestjs/core";
 
 import cookieParser from "cookie-parser";
 
@@ -28,6 +32,8 @@ async function bootstrap() {
       forbidUnknownValues: true,
     }),
   );
+
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   app.useGlobalFilters(new ValidationExceptionFilter());
 

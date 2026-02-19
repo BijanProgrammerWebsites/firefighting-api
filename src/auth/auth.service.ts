@@ -54,8 +54,6 @@ export class AuthService {
     try {
       await this.userRepository.save(user);
 
-      await this.generateTokensAndSetCookies(user, res);
-
       return { message: "Signed up successfully." };
     } catch {
       throw new InternalServerErrorException();
@@ -150,13 +148,21 @@ export class AuthService {
   }
 
   private generateAccessToken(user: User): string {
-    const payload: JwtPayloadType = { sub: user.id, username: user.username };
+    const payload: JwtPayloadType = {
+      sub: user.id,
+      username: user.username,
+      role: user.role,
+    };
 
     return this.jwtService.sign(payload);
   }
 
   private generateRefreshToken(user: User): string {
-    const payload: JwtPayloadType = { sub: user.id, username: user.username };
+    const payload: JwtPayloadType = {
+      sub: user.id,
+      username: user.username,
+      role: user.role,
+    };
 
     return this.jwtService.sign(payload, {
       secret: this.configService.get<string>("JWT_REFRESH_SECRET"),

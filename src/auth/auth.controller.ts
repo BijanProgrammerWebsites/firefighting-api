@@ -25,6 +25,9 @@ import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 import { JwtPayloadType } from "./types/jwt-payload.type";
 
 import { AuthService } from "./auth.service";
+import { RolesGuard } from "./guards/roles.guard";
+import { Roles } from "./decorators/roles.decorator";
+import { Role } from "../shared/enums/role.enum";
 
 @Controller("auth")
 export class AuthController {
@@ -34,6 +37,8 @@ export class AuthController {
     private configService: ConfigService,
   ) {}
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
   @Post("sign-up")
   public signUp(
     @Body() dto: SignUpDto,
