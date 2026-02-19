@@ -1,16 +1,17 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
   UseGuards,
 } from "@nestjs/common";
 import { EquipmentsService } from "./equipments.service";
 import { CreateEquipmentDto } from "./dto/create-equipment.dto";
 import { UpdateEquipmentDto } from "./dto/update-equipment.dto";
+import { MoveDto } from "../shared/dto/move.dto";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../auth/guards/roles.guard";
 import { Roles } from "../auth/decorators/roles.decorator";
@@ -34,16 +35,21 @@ export class EquipmentsController {
 
   @Get(":id")
   public findOne(@Param("id") id: string) {
-    return this.equipmentsService.findOne(+id);
+    return this.equipmentsService.findOne(id);
   }
 
   @Patch(":id")
   public update(@Param("id") id: string, @Body() dto: UpdateEquipmentDto) {
-    return this.equipmentsService.update(+id, dto);
+    return this.equipmentsService.update(id, dto);
   }
 
   @Delete(":id")
   public remove(@Param("id") id: string) {
-    return this.equipmentsService.remove(+id);
+    return this.equipmentsService.remove(id);
+  }
+
+  @Post(":id/move")
+  public move(@Param("id") id: string, @Body() dto: MoveDto) {
+    return this.equipmentsService.move(id, dto);
   }
 }

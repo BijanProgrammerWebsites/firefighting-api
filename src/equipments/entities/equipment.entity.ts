@@ -9,6 +9,9 @@ export class Equipment {
   @Column({ type: "int" })
   position: number;
 
+  @Column("text")
+  title: string;
+
   @ManyToOne(() => Unit, (unit) => unit.equipments, { onDelete: "CASCADE" })
   unit: Unit;
 }
