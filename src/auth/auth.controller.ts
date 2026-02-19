@@ -40,11 +40,8 @@ export class AuthController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @Post("sign-up")
-  public signUp(
-    @Body() dto: SignUpDto,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    return this.authService.signUp(dto, res);
+  public signUp(@Body() dto: SignUpDto) {
+    return this.authService.signUp(dto);
   }
 
   @Post("sign-in")
@@ -75,7 +72,7 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const refreshToken = req.cookies.refreshToken;
+    const refreshToken: string | undefined = req.cookies.refreshToken;
 
     if (!refreshToken) {
       throw new UnauthorizedException("Refresh token not found.");

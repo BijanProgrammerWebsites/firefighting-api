@@ -32,7 +32,7 @@ export class AuthService {
     private configService: ConfigService,
   ) {}
 
-  public async signUp(dto: SignUpDto, res: Response): Promise<ResponseDto> {
+  public async signUp(dto: SignUpDto): Promise<ResponseDto> {
     const { username, password } = dto;
 
     const foundUser = await this.userRepository.findOne({
