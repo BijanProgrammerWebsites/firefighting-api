@@ -9,6 +9,6 @@ import { RefineryModule } from "../refinery/refinery.module";
   imports: [TypeOrmModule.forFeature([Site]), RefineryModule],
   controllers: [SitesController],
   providers: [SitesService],
-  exports: [TypeOrmModule],
+  exports: [TypeOrmModule, SitesService],
 })
 export class SitesModule {}

@@ -1,16 +1,17 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
   UseGuards,
 } from "@nestjs/common";
 import { ZonesService } from "./zones.service";
 import { CreateZoneDto } from "./dto/create-zone.dto";
 import { UpdateZoneDto } from "./dto/update-zone.dto";
+import { MoveDto } from "../shared/dto/move.dto";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../auth/guards/roles.guard";
 import { Roles } from "../auth/decorators/roles.decorator";
@@ -34,16 +35,21 @@ export class ZonesController {
 
   @Get(":id")
   public findOne(@Param("id") id: string) {
-    return this.zonesService.findOne(+id);
+    return this.zonesService.findOne(id);
   }
 
   @Patch(":id")
   public update(@Param("id") id: string, @Body() dto: UpdateZoneDto) {
-    return this.zonesService.update(+id, dto);
+    return this.zonesService.update(id, dto);
   }
 
   @Delete(":id")
   public remove(@Param("id") id: string) {
-    return this.zonesService.remove(+id);
+    return this.zonesService.remove(id);
+  }
+
+  @Post(":id/move")
+  public move(@Param("id") id: string, @Body() dto: MoveDto) {
+    return this.zonesService.move(id, dto);
   }
 }
