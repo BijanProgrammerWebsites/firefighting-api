@@ -9,6 +9,11 @@ import { AuthModule } from "./auth/auth.module";
 
 import { User } from "./users/user.entity";
 import { UsersModule } from "./users/users.module";
+import { RefineryModule } from "./refinery/refinery.module";
+import { SitesModule } from "./sites/sites.module";
+import { ZonesModule } from "./zones/zones.module";
+import { UnitsModule } from "./units/units.module";
+import { EquipmentsModule } from "./equipments/equipments.module";
 
 @Module({
   imports: [
@@ -25,6 +30,11 @@ import { UsersModule } from "./users/users.module";
     }),
     AuthModule,
     UsersModule,
+    RefineryModule,
+    SitesModule,
+    ZonesModule,
+    UnitsModule,
+    EquipmentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
