@@ -98,8 +98,13 @@ export class AuthService {
     return { message: "Signed out successfully." };
   }
 
-  public verify(): ResponseDto {
-    return { message: "Authenticated." };
+  public verify(user: User): ResponseDto<SafeUser> {
+    const { password: _1, refreshToken: _2, ...safeUser } = user;
+
+    return {
+      message: "Authenticated.",
+      result: safeUser,
+    };
   }
 
   public async refresh(

@@ -64,8 +64,8 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get("verify")
-  public verify() {
-    return this.authService.verify();
+  public verify(@GetUser() user: User) {
+    return this.authService.verify(user);
   }
 
   @Get("refresh")
