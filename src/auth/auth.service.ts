@@ -98,7 +98,7 @@ export class AuthService {
     return { message: "Signed out successfully." };
   }
 
-  public valid(): ResponseDto {
+  public verify(): ResponseDto {
     return { message: "Authenticated." };
   }
 
