@@ -10,24 +10,31 @@ import {
 import { StandardsService } from "./standards.service";
 import { CreateStandardDto } from "./dto/create-standard.dto";
 import { UpdateStandardDto } from "./dto/update-standard.dto";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { RolesGuard } from "../auth/guards/roles.guard";
+import { Roles } from "../auth/decorators/roles.decorator";
+import { Role } from "../shared/enums/role.enum";
+import { UseGuards } from "@nestjs/common";
 
-@Controller("standard")
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.ADMIN)
+@Controller("standards")
 export class StandardsController {
-  constructor(private readonly standardService: StandardsService) {}
+  constructor(private readonly standardsService: StandardsService) {}
 
   @Post()
   create(@Body() createStandardDto: CreateStandardDto) {
-    return this.standardService.create(createStandardDto);
+    return this.standardsService.create(createStandardDto);
   }
 
   @Get()
   findAll() {
-    return this.standardService.findAll();
+    return this.standardsService.findAll();
   }
 
   @Get(":id")
   findOne(@Param("id") id: string) {
-    return this.standardService.findOne(+id);
+    return this.standardsService.findOne(id);
   }
 
   @Patch(":id")
@@ -35,11 +42,11 @@ export class StandardsController {
     @Param("id") id: string,
     @Body() updateStandardDto: UpdateStandardDto,
   ) {
-    return this.standardService.update(+id, updateStandardDto);
+    return this.standardsService.update(id, updateStandardDto);
   }
 
   @Delete(":id")
   remove(@Param("id") id: string) {
-    return this.standardService.remove(+id);
+    return this.standardsService.remove(id);
   }
 }

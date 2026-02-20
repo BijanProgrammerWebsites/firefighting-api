@@ -6,12 +6,19 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { InspectionsService } from "./inspections.service";
 import { CreateInspectionDto } from "./dto/create-inspection.dto";
 import { UpdateInspectionDto } from "./dto/update-inspection.dto";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { RolesGuard } from "../auth/guards/roles.guard";
+import { Roles } from "../auth/decorators/roles.decorator";
+import { Role } from "../shared/enums/role.enum";
 
-@Controller("inspection")
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.ADMIN)
+@Controller("inspections")
 export class InspectionsController {
   constructor(private readonly inspectionService: InspectionsService) {}
 
@@ -27,7 +34,7 @@ export class InspectionsController {
 
   @Get(":id")
   findOne(@Param("id") id: string) {
-    return this.inspectionService.findOne(+id);
+    return this.inspectionService.findOne(id);
   }
 
   @Patch(":id")
@@ -35,11 +42,11 @@ export class InspectionsController {
     @Param("id") id: string,
     @Body() updateInspectionDto: UpdateInspectionDto,
   ) {
-    return this.inspectionService.update(+id, updateInspectionDto);
+    return this.inspectionService.update(id, updateInspectionDto);
   }
 
   @Delete(":id")
   remove(@Param("id") id: string) {
-    return this.inspectionService.remove(+id);
+    return this.inspectionService.remove(id);
   }
 }

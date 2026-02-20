@@ -1,26 +1,60 @@
-import { Injectable } from "@nestjs/common";
-import { CreateQuestionDto } from "./dto/create-question.dto";
-import { UpdateQuestionDto } from "./dto/update-question.dto";
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { Question } from "./entities/question.entity";
+import { ResponseDto } from "../shared/dto/response.dto";
 
 @Injectable()
 export class QuestionsService {
-  create(createQuestionDto: CreateQuestionDto) {
-    return "This action adds a new question";
+  public constructor(
+    @InjectRepository(Question)
+    private readonly questionRepo: Repository<Question>,
+  ) {}
+
+  public async create(): Promise<never> {
+    throw new BadRequestException(
+      "Questions can only be managed through standards.",
+    );
   }
 
-  findAll() {
-    return `This action returns all questions`;
+  public async findAll(): Promise<ResponseDto<Question[]>> {
+    const questions = await this.questionRepo.find({
+      relations: ["standard"],
+      order: { text: "ASC" },
+    });
+
+    return {
+      message: "Questions found successfully.",
+      result: questions,
+    };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} question`;
+  public async findOne(id: string): Promise<Question> {
+    const question = await this.questionRepo.findOne({
+      where: { id },
+      relations: ["standard"],
+    });
+
+    if (!question) {
+      throw new NotFoundException("Question not found.");
+    }
+
+    return question;
   }
 
-  update(id: number, updateQuestionDto: UpdateQuestionDto) {
-    return `This action updates a #${id} question`;
+  public async update(): Promise<never> {
+    throw new BadRequestException(
+      "Questions can only be managed through standards.",
+    );
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} question`;
+  public async remove(): Promise<never> {
+    throw new BadRequestException(
+      "Questions can only be managed through standards.",
+    );
   }
 }

@@ -6,12 +6,19 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { TemplatesService } from "./templates.service";
 import { CreateTemplateDto } from "./dto/create-template.dto";
 import { UpdateTemplateDto } from "./dto/update-template.dto";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { RolesGuard } from "../auth/guards/roles.guard";
+import { Roles } from "../auth/decorators/roles.decorator";
+import { Role } from "../shared/enums/role.enum";
 
-@Controller("template")
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.ADMIN)
+@Controller("templates")
 export class TemplatesController {
   constructor(private readonly templateService: TemplatesService) {}
 
@@ -27,7 +34,7 @@ export class TemplatesController {
 
   @Get(":id")
   findOne(@Param("id") id: string) {
-    return this.templateService.findOne(+id);
+    return this.templateService.findOne(id);
   }
 
   @Patch(":id")
@@ -35,11 +42,11 @@ export class TemplatesController {
     @Param("id") id: string,
     @Body() updateTemplateDto: UpdateTemplateDto,
   ) {
-    return this.templateService.update(+id, updateTemplateDto);
+    return this.templateService.update(id, updateTemplateDto);
   }
 
   @Delete(":id")
   remove(@Param("id") id: string) {
-    return this.templateService.remove(+id);
+    return this.templateService.remove(id);
   }
 }

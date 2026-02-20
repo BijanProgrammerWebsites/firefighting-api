@@ -2,22 +2,26 @@ import {
   Controller,
   Get,
   Post,
-  Body,
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { QuestionsService } from "./questions.service";
-import { CreateQuestionDto } from "./dto/create-question.dto";
-import { UpdateQuestionDto } from "./dto/update-question.dto";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { RolesGuard } from "../auth/guards/roles.guard";
+import { Roles } from "../auth/decorators/roles.decorator";
+import { Role } from "../shared/enums/role.enum";
 
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.ADMIN)
 @Controller("questions")
 export class QuestionsController {
   constructor(private readonly questionsService: QuestionsService) {}
 
   @Post()
-  create(@Body() createQuestionDto: CreateQuestionDto) {
-    return this.questionsService.create(createQuestionDto);
+  create() {
+    return this.questionsService.create();
   }
 
   @Get()
@@ -27,19 +31,16 @@ export class QuestionsController {
 
   @Get(":id")
   findOne(@Param("id") id: string) {
-    return this.questionsService.findOne(+id);
+    return this.questionsService.findOne(id);
   }
 
   @Patch(":id")
-  update(
-    @Param("id") id: string,
-    @Body() updateQuestionDto: UpdateQuestionDto,
-  ) {
-    return this.questionsService.update(+id, updateQuestionDto);
+  update() {
+    return this.questionsService.update();
   }
 
   @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.questionsService.remove(+id);
+  remove() {
+    return this.questionsService.remove();
   }
 }
