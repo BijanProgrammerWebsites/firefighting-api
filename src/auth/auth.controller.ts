@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Post,
   Req,
@@ -53,7 +54,7 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post("sign-out")
+  @Delete("sign-out")
   public signOut(
     @GetUser() user: User,
     @Res({ passthrough: true }) res: Response,
@@ -62,9 +63,9 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get("valid")
-  public valid() {
-    return this.authService.valid();
+  @Get("verify")
+  public verify() {
+    return this.authService.verify();
   }
 
   @Get("refresh")

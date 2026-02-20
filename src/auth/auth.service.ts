@@ -22,6 +22,7 @@ import { SignUpDto } from "./dto/sign-up.dto";
 import { SignInDto } from "./dto/sign-in.dto";
 
 import { JwtPayloadType } from "./types/jwt-payload.type";
+import { SafeUser } from "../shared/types/safe-user.type";
 
 @Injectable()
 export class AuthService {
@@ -60,7 +61,10 @@ export class AuthService {
     }
   }
 
-  public async signIn(dto: SignInDto, res: Response): Promise<ResponseDto> {
+  public async signIn(
+    dto: SignInDto,
+    res: Response,
+  ): Promise<ResponseDto<SafeUser>> {
     const { username, password } = dto;
 
     const foundUser = await this.userRepo.findOne({
@@ -78,7 +82,12 @@ export class AuthService {
 
     await this.generateTokensAndSetCookies(foundUser, res);
 
-    return { message: "Signed in successfully." };
+    const { password: _1, refreshToken: _2, ...safeUser } = foundUser;
+
+    return {
+      message: "Signed in successfully.",
+      result: safeUser,
+    };
   }
 
   public async signOut(userId: string, res: Response): Promise<ResponseDto> {
@@ -89,7 +98,7 @@ export class AuthService {
     return { message: "Signed out successfully." };
   }
 
-  public valid(): ResponseDto {
+  public verify(): ResponseDto {
     return { message: "Authenticated." };
   }
 
