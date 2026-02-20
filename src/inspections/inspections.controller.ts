@@ -23,22 +23,22 @@ export class InspectionsController {
   constructor(private readonly inspectionService: InspectionsService) {}
 
   @Post()
-  create(@Body() createInspectionDto: CreateInspectionDto) {
+  public create(@Body() createInspectionDto: CreateInspectionDto) {
     return this.inspectionService.create(createInspectionDto);
   }
 
   @Get()
-  findAll() {
+  public findAll() {
     return this.inspectionService.findAll();
   }
 
   @Get(":id")
-  findOne(@Param("id") id: string) {
+  public findOne(@Param("id") id: string) {
     return this.inspectionService.findOne(id);
   }
 
   @Patch(":id")
-  update(
+  public update(
     @Param("id") id: string,
     @Body() updateInspectionDto: UpdateInspectionDto,
   ) {
@@ -46,7 +46,7 @@ export class InspectionsController {
   }
 
   @Delete(":id")
-  remove(@Param("id") id: string) {
+  public remove(@Param("id") id: string) {
     return this.inspectionService.remove(id);
   }
 }

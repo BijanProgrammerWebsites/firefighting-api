@@ -23,22 +23,22 @@ export class TemplatesController {
   constructor(private readonly templateService: TemplatesService) {}
 
   @Post()
-  create(@Body() createTemplateDto: CreateTemplateDto) {
+  public create(@Body() createTemplateDto: CreateTemplateDto) {
     return this.templateService.create(createTemplateDto);
   }
 
   @Get()
-  findAll() {
+  public findAll() {
     return this.templateService.findAll();
   }
 
   @Get(":id")
-  findOne(@Param("id") id: string) {
+  public findOne(@Param("id") id: string) {
     return this.templateService.findOne(id);
   }
 
   @Patch(":id")
-  update(
+  public update(
     @Param("id") id: string,
     @Body() updateTemplateDto: UpdateTemplateDto,
   ) {
@@ -46,7 +46,7 @@ export class TemplatesController {
   }
 
   @Delete(":id")
-  remove(@Param("id") id: string) {
+  public remove(@Param("id") id: string) {
     return this.templateService.remove(id);
   }
 }

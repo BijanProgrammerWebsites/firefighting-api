@@ -23,27 +23,30 @@ export class AnswersController {
   constructor(private readonly answersService: AnswersService) {}
 
   @Post()
-  create(@Body() createAnswerDto: CreateAnswerDto) {
+  public create(@Body() createAnswerDto: CreateAnswerDto) {
     return this.answersService.create(createAnswerDto);
   }
 
   @Get()
-  findAll() {
+  public findAll() {
     return this.answersService.findAll();
   }
 
   @Get(":id")
-  findOne(@Param("id") id: string) {
+  public findOne(@Param("id") id: string) {
     return this.answersService.findOne(id);
   }
 
   @Patch(":id")
-  update(@Param("id") id: string, @Body() updateAnswerDto: UpdateAnswerDto) {
+  public update(
+    @Param("id") id: string,
+    @Body() updateAnswerDto: UpdateAnswerDto,
+  ) {
     return this.answersService.update(id, updateAnswerDto);
   }
 
   @Delete(":id")
-  remove(@Param("id") id: string) {
+  public remove(@Param("id") id: string) {
     return this.answersService.remove(id);
   }
 }

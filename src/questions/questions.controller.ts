@@ -20,27 +20,27 @@ export class QuestionsController {
   constructor(private readonly questionsService: QuestionsService) {}
 
   @Post()
-  create() {
+  public create() {
     return this.questionsService.create();
   }
 
   @Get()
-  findAll() {
+  public findAll() {
     return this.questionsService.findAll();
   }
 
   @Get(":id")
-  findOne(@Param("id") id: string) {
+  public findOne(@Param("id") id: string) {
     return this.questionsService.findOne(id);
   }
 
   @Patch(":id")
-  update() {
+  public update() {
     return this.questionsService.update();
   }
 
   @Delete(":id")
-  remove() {
+  public remove() {
     return this.questionsService.remove();
   }
 }
