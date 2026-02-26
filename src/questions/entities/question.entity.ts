@@ -7,7 +7,10 @@ export class Question {
   id: string;
 
   @Column("text")
-  text: string;
+  title: string;
+
+  @Column("text")
+  description: string;
 
   @ManyToOne(() => Standard, (standard) => standard.questions)
   standard: Standard;

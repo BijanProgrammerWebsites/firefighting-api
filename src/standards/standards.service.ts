@@ -22,8 +22,8 @@ export class StandardsService {
     });
 
     if (dto.questions?.length) {
-      const questions = dto.questions.map((text) =>
-        this.questionRepo.create({ text, standard }),
+      const questions = dto.questions.map(({ title, description }) =>
+        this.questionRepo.create({ title, description, standard }),
       );
       await this.questionRepo.save(questions);
     }
@@ -81,8 +81,8 @@ export class StandardsService {
       }
 
       if (dto.questions.length) {
-        const questions = dto.questions.map((text) =>
-          this.questionRepo.create({ text, standard }),
+        const questions = dto.questions.map(({ title, description }) =>
+          this.questionRepo.create({ title, description, standard }),
         );
         await this.questionRepo.save(questions);
       }

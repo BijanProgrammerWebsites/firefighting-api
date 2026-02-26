@@ -1,5 +1,23 @@
-import { IsArray, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import {
+  IsArray,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from "class-validator";
+import { Type } from "class-transformer";
 import { Trim } from "../../shared/decorators/trim.decorator";
+
+export class QuestionInputDto {
+  @IsString()
+  @Trim()
+  @IsNotEmpty()
+  title: string;
+
+  @IsString()
+  @Trim()
+  description: string;
+}
 
 export class CreateStandardDto {
   @IsString()
@@ -8,7 +26,8 @@ export class CreateStandardDto {
   title: string;
 
   @IsArray()
-  @IsString({ each: true })
+  @ValidateNested({ each: true })
+  @Type(() => QuestionInputDto)
   @IsOptional()
-  questions?: string[];
+  questions?: QuestionInputDto[];
 }

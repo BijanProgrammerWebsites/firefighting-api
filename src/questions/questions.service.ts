@@ -22,10 +22,7 @@ export class QuestionsService {
   }
 
   public async findAll(): Promise<ResponseDto<Question[]>> {
-    const questions = await this.questionRepo.find({
-      relations: ["standard"],
-      order: { text: "ASC" },
-    });
+    const questions = await this.questionRepo.find({ relations: ["standard"] });
 
     return {
       message: "Questions found successfully.",

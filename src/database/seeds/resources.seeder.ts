@@ -40,37 +40,44 @@ export class ResourcesSeeder implements Seeder {
 
     const extinguisherQuestions = await questionRepo.save([
       {
-        text: "آیا کپسول به‌درستی نصب شده و به‌خوبی قابل‌مشاهده است؟",
+        title: "آیا کپسول به‌درستی نصب شده و به‌خوبی قابل‌مشاهده است؟",
+        description: "بررسی نصب صحیح و قابل‌مشاهده بودن کپسول آتش‌نشانی.",
         standard: extinguishersStd,
       },
       {
-        text: "آیا فشارسنج در محدوده سبز قرار دارد؟",
+        title: "آیا فشارسنج در محدوده سبز قرار دارد؟",
+        description: "کنترل وضعیت فشار کپسول از طریق فشارسنج.",
         standard: extinguishersStd,
       },
       {
-        text: "آیا برچسب بازرسی به‌روز است؟",
+        title: "آیا برچسب بازرسی به‌روز است؟",
+        description: "اطمینان از به‌روز بودن آخرین برچسب بازرسی روی کپسول.",
         standard: extinguishersStd,
       },
     ]);
 
     const hydrantQuestions = await questionRepo.save([
       {
-        text: "آیا هیدرانت در دسترس و بدون مانع است؟",
+        title: "آیا هیدرانت در دسترس و بدون مانع است؟",
+        description: "بررسی دسترسی آسان به هیدرانت و نبود موانع فیزیکی.",
         standard: hydrantsStd,
       },
       {
-        text: "آیا قرقره شیلنگ در وضعیت مناسبی قرار دارد؟",
+        title: "آیا قرقره شیلنگ در وضعیت مناسبی قرار دارد؟",
+        description: "ارزیابی وضعیت استقرار و آماده‌به‌کار بودن قرقره شیلنگ.",
         standard: hydrantsStd,
       },
     ]);
 
     const exitQuestions = await questionRepo.save([
       {
-        text: "آیا خروجی‌های اضطراری به‌طور واضح مشخص شده‌اند؟",
+        title: "آیا خروجی‌های اضطراری به‌طور واضح مشخص شده‌اند؟",
+        description: "بررسی وضوح علائم و نشانه‌های خروجی‌های اضطراری.",
         standard: exitsStd,
       },
       {
-        text: "آیا مسیرهای خروجی بدون مانع هستند؟",
+        title: "آیا مسیرهای خروجی بدون مانع هستند؟",
+        description: "اطمینان از باز بودن و بدون مانع بودن مسیرهای خروج.",
         standard: exitsStd,
       },
     ]);

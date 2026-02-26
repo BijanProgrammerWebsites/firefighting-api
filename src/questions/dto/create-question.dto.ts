@@ -5,5 +5,9 @@ export class CreateQuestionDto {
   @IsString()
   @Trim()
   @IsNotEmpty()
-  text: string;
+  title: string;
+
+  @IsString()
+  @Trim()
+  description: string;
 }
