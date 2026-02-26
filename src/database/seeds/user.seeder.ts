@@ -5,8 +5,6 @@ import { Role } from "../../shared/enums/role.enum";
 import * as bcrypt from "bcrypt";
 
 export class UserSeeder implements Seeder {
-  track = true;
-
   async run(dataSource: DataSource) {
     const repo = dataSource.getRepository(User);
 

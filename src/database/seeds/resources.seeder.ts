@@ -14,8 +14,6 @@ import { Zone } from "../../zones/entities/zone.entity";
 import { Status } from "../../shared/enums/status.enum";
 
 export class ResourcesSeeder implements Seeder {
-  track = true;
-
   async run(dataSource: DataSource) {
     const answerRepo = dataSource.getRepository(Answer);
     const inspectionRepo = dataSource.getRepository(Inspection);
