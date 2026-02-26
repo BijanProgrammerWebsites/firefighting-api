@@ -40,7 +40,7 @@ export class AnswersService {
     };
   }
 
-  public async findOne(id: string): Promise<Answer> {
+  public async findOne(id: string): Promise<ResponseDto<Answer>> {
     const answer = await this.answerRepo.findOne({
       where: { id },
       relations: ["inspection", "question"],
@@ -50,7 +50,10 @@ export class AnswersService {
       throw new NotFoundException("Answer not found.");
     }
 
-    return answer;
+    return {
+      message: "پاسخ با موفقیت دریافت شد.",
+      result: answer,
+    };
   }
 
   public async update(_: string, __: UpdateAnswerDto): Promise<never> {

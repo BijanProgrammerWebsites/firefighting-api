@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from "@nestjs/common";
 import { CreateEquipmentDto } from "./dto/create-equipment.dto";
 import { UpdateEquipmentDto } from "./dto/update-equipment.dto";
 import { MoveDto } from "../shared/dto/move.dto";
@@ -19,7 +23,13 @@ export class EquipmentsService {
   ) {}
 
   public async create(dto: CreateEquipmentDto): Promise<ResponseDto<string>> {
-    const unit = await this.unitsService.findOne(dto.unitId);
+    const unitResponse = await this.unitsService.findOne(dto.unitId);
+
+    if ("error" in unitResponse) {
+      throw new InternalServerErrorException(unitResponse.error);
+    }
+
+    const { result: unit } = unitResponse;
 
     const maxPosition = await getMaxPosition(
       this.equipmentRepo,
@@ -50,7 +60,7 @@ export class EquipmentsService {
     };
   }
 
-  public async findOne(id: string): Promise<Equipment> {
+  private async getEquipmentOrFail(id: string): Promise<Equipment> {
     const equipment = await this.equipmentRepo.findOne({ where: { id } });
 
     if (!equipment) {
@@ -60,11 +70,20 @@ export class EquipmentsService {
     return equipment;
   }
 
+  public async findOne(id: string): Promise<ResponseDto<Equipment>> {
+    const equipment = await this.getEquipmentOrFail(id);
+
+    return {
+      message: "تجهیز با موفقیت دریافت شد.",
+      result: equipment,
+    };
+  }
+
   public async update(
     id: string,
     dto: UpdateEquipmentDto,
   ): Promise<ResponseDto> {
-    const equipment = await this.findOne(id);
+    const equipment = await this.getEquipmentOrFail(id);
 
     const updatedEquipment = assignDefinedValues(equipment, dto);
     await this.equipmentRepo.save(updatedEquipment);
@@ -79,7 +98,7 @@ export class EquipmentsService {
   }
 
   public async move(id: string, dto: MoveDto): Promise<ResponseDto> {
-    const active = await this.findOne(id);
+    const active = await this.getEquipmentOrFail(id);
 
     const over = await this.equipmentRepo.findOne({
       where: { id: dto.overId },

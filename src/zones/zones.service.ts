@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from "@nestjs/common";
 import { CreateZoneDto } from "./dto/create-zone.dto";
 import { UpdateZoneDto } from "./dto/update-zone.dto";
 import { MoveDto } from "../shared/dto/move.dto";
@@ -19,7 +23,13 @@ export class ZonesService {
   ) {}
 
   public async create(dto: CreateZoneDto): Promise<ResponseDto<string>> {
-    const site = await this.sitesService.findOne(dto.siteId);
+    const siteResponse = await this.sitesService.findOne(dto.siteId);
+
+    if ("error" in siteResponse) {
+      throw new InternalServerErrorException(siteResponse.error);
+    }
+
+    const { result: site } = siteResponse;
 
     const maxPosition = await getMaxPosition(this.zoneRepo, "siteId", site.id);
 
@@ -44,7 +54,7 @@ export class ZonesService {
     };
   }
 
-  public async findOne(id: string): Promise<Zone> {
+  private async getZoneOrFail(id: string): Promise<Zone> {
     const zone = await this.zoneRepo.findOne({ where: { id } });
 
     if (!zone) {
@@ -54,8 +64,17 @@ export class ZonesService {
     return zone;
   }
 
+  public async findOne(id: string): Promise<ResponseDto<Zone>> {
+    const zone = await this.getZoneOrFail(id);
+
+    return {
+      message: "زون با موفقیت دریافت شد.",
+      result: zone,
+    };
+  }
+
   public async update(id: string, dto: UpdateZoneDto): Promise<ResponseDto> {
-    const zone = await this.findOne(id);
+    const zone = await this.getZoneOrFail(id);
 
     const updatedZone = assignDefinedValues(zone, dto);
     await this.zoneRepo.save(updatedZone);
@@ -70,7 +89,7 @@ export class ZonesService {
   }
 
   public async move(id: string, dto: MoveDto): Promise<ResponseDto> {
-    const active = await this.findOne(id);
+    const active = await this.getZoneOrFail(id);
 
     const over = await this.zoneRepo.findOne({
       where: { id: dto.overId },

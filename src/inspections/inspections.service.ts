@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from "@nestjs/common";
 import { CreateInspectionDto } from "./dto/create-inspection.dto";
 import { UpdateInspectionDto } from "./dto/update-inspection.dto";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -22,7 +26,15 @@ export class InspectionsService {
   ) {}
 
   public async create(dto: CreateInspectionDto): Promise<ResponseDto<string>> {
-    const equipment = await this.equipmentsService.findOne(dto.equipmentId);
+    const equipmentResponse = await this.equipmentsService.findOne(
+      dto.equipmentId,
+    );
+
+    if ("error" in equipmentResponse) {
+      throw new InternalServerErrorException(equipmentResponse.error);
+    }
+
+    const { result: equipment } = equipmentResponse;
 
     const inspection = await this.inspectionRepo.save({
       equipment,
@@ -85,7 +97,7 @@ export class InspectionsService {
     return inspection;
   }
 
-  public async findOne(id: string): Promise<Inspection> {
+  public async findOne(id: string): Promise<ResponseDto<Inspection>> {
     const inspection = await this.inspectionRepo.findOne({
       where: { id },
       relations: ["equipment", "answers", "answers.question"],
@@ -95,7 +107,10 @@ export class InspectionsService {
       throw new NotFoundException("Inspection not found.");
     }
 
-    return inspection;
+    return {
+      message: "بازرسی با موفقیت دریافت شد.",
+      result: inspection,
+    };
   }
 
   public async update(
@@ -105,9 +120,16 @@ export class InspectionsService {
     const inspection = await this.getInspectionOrFail(id);
 
     if (dto.equipmentId) {
-      inspection.equipment = await this.equipmentsService.findOne(
+      const equipmentResponse = await this.equipmentsService.findOne(
         dto.equipmentId,
       );
+
+      if ("error" in equipmentResponse) {
+        throw new InternalServerErrorException(equipmentResponse.error);
+      }
+
+      const { result: equipment } = equipmentResponse;
+      inspection.equipment = equipment;
     }
 
     if (dto.answers) {

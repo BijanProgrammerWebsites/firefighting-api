@@ -50,7 +50,7 @@ export class TemplatesService {
     };
   }
 
-  public async findOne(id: string): Promise<Template> {
+  private async getTemplateOrFail(id: string): Promise<Template> {
     const template = await this.templateRepo.findOne({
       where: { id },
       relations: ["standard"],
@@ -63,11 +63,20 @@ export class TemplatesService {
     return template;
   }
 
+  public async findOne(id: string): Promise<ResponseDto<Template>> {
+    const template = await this.getTemplateOrFail(id);
+
+    return {
+      message: "قالب با موفقیت دریافت شد.",
+      result: template,
+    };
+  }
+
   public async update(
     id: string,
     dto: UpdateTemplateDto,
   ): Promise<ResponseDto> {
-    const template = await this.findOne(id);
+    const template = await this.getTemplateOrFail(id);
 
     const updatedTemplate = assignDefinedValues(template, dto);
     await this.templateRepo.save(updatedTemplate);

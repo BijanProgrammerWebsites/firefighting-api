@@ -49,7 +49,7 @@ export class SitesService {
     };
   }
 
-  public async findOne(id: string): Promise<Site> {
+  private async getSiteOrFail(id: string): Promise<Site> {
     const site = await this.siteRepo.findOne({ where: { id } });
 
     if (!site) {
@@ -59,8 +59,17 @@ export class SitesService {
     return site;
   }
 
+  public async findOne(id: string): Promise<ResponseDto<Site>> {
+    const site = await this.getSiteOrFail(id);
+
+    return {
+      message: "سایت با موفقیت دریافت شد.",
+      result: site,
+    };
+  }
+
   public async update(id: string, dto: UpdateSiteDto): Promise<ResponseDto> {
-    const site = await this.findOne(id);
+    const site = await this.getSiteOrFail(id);
 
     const updatedSite = assignDefinedValues(site, dto);
     await this.siteRepo.save(updatedSite);
@@ -75,7 +84,7 @@ export class SitesService {
   }
 
   public async move(id: string, dto: MoveDto): Promise<ResponseDto> {
-    const active = await this.findOne(id);
+    const active = await this.getSiteOrFail(id);
 
     const over = await this.siteRepo.findOne({
       where: { id: dto.overId },

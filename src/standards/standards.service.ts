@@ -46,7 +46,7 @@ export class StandardsService {
     };
   }
 
-  public async findOne(id: string): Promise<Standard> {
+  private async getStandardOrFail(id: string): Promise<Standard> {
     const standard = await this.standardRepo.findOne({
       where: { id },
       relations: ["questions"],
@@ -59,11 +59,20 @@ export class StandardsService {
     return standard;
   }
 
+  public async findOne(id: string): Promise<ResponseDto<Standard>> {
+    const standard = await this.getStandardOrFail(id);
+
+    return {
+      message: "استاندارد با موفقیت دریافت شد.",
+      result: standard,
+    };
+  }
+
   public async update(
     id: string,
     dto: UpdateStandardDto,
   ): Promise<ResponseDto> {
-    const standard = await this.findOne(id);
+    const standard = await this.getStandardOrFail(id);
 
     if (dto.title !== undefined) {
       standard.title = dto.title;
@@ -92,7 +101,7 @@ export class StandardsService {
   }
 
   public async remove(id: string): Promise<ResponseDto> {
-    const standard = await this.findOne(id);
+    const standard = await this.getStandardOrFail(id);
 
     const existingQuestions = await this.questionRepo.find({
       where: { standard: { id } as any },

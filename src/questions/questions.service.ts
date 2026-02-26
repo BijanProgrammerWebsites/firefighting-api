@@ -30,7 +30,7 @@ export class QuestionsService {
     };
   }
 
-  public async findOne(id: string): Promise<Question> {
+  private async getQuestionOrFail(id: string): Promise<Question> {
     const question = await this.questionRepo.findOne({
       where: { id },
       relations: ["standard"],
@@ -41,6 +41,15 @@ export class QuestionsService {
     }
 
     return question;
+  }
+
+  public async findOne(id: string): Promise<ResponseDto<Question>> {
+    const question = await this.getQuestionOrFail(id);
+
+    return {
+      message: "سؤال با موفقیت دریافت شد.",
+      result: question,
+    };
   }
 
   public async update(): Promise<never> {
