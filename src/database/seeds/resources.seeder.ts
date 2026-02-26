@@ -29,20 +29,6 @@ export class ResourcesSeeder implements Seeder {
     const questionRepo = dataSource.getRepository(Question);
     const standardRepo = dataSource.getRepository(Standard);
 
-    // Clear children first to avoid FK issues.
-    await answerRepo.clear();
-    await inspectionRepo.clear();
-    await equipmentRepo.clear();
-    await unitRepo.clear();
-    await zoneRepo.clear();
-    await siteRepo.clear();
-
-    await templateRepo.clear();
-    await questionRepo.clear();
-    await standardRepo.clear();
-
-    await refineryRepo.clear();
-
     // --- Standards, templates, questions ---
     const standards = await standardRepo.save([
       { title: "کپسول‌های آتش‌نشانی" },
