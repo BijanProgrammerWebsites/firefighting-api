@@ -19,6 +19,16 @@ import { Equipment } from "./equipments/entities/equipment.entity";
 import { Site } from "./sites/entities/site.entity";
 import { Zone } from "./zones/entities/zone.entity";
 import { Unit } from "./units/entities/unit.entity";
+import { StandardsModule } from "./standards/standards.module";
+import { TemplatesModule } from "./templates/templates.module";
+import { InspectionsModule } from "./inspections/inspections.module";
+import { AnswersModule } from "./answers/answers.module";
+import { QuestionsModule } from "./questions/questions.module";
+import { Standard } from "./standards/entities/standard.entity";
+import { Template } from "./templates/entities/template.entity";
+import { Question } from "./questions/entities/question.entity";
+import { Inspection } from "./inspections/entities/inspection.entity";
+import { Answer } from "./answers/entities/answer.entity";
 
 @Module({
   imports: [
@@ -30,16 +40,33 @@ import { Unit } from "./units/entities/unit.entity";
       username: process.env.DATABASE_USERNAME!,
       password: process.env.DATABASE_PASSWORD!,
       database: process.env.DATABASE_DATABASE!,
-      entities: [User, Refinery, Site, Zone, Unit, Equipment],
+      entities: [
+        Answer,
+        Equipment,
+        Inspection,
+        Question,
+        Refinery,
+        Site,
+        Standard,
+        Template,
+        Unit,
+        User,
+        Zone,
+      ],
       synchronize: true,
     }),
     AuthModule,
-    UsersModule,
+    AnswersModule,
+    EquipmentsModule,
+    InspectionsModule,
+    QuestionsModule,
     RefineryModule,
     SitesModule,
-    ZonesModule,
+    StandardsModule,
+    TemplatesModule,
     UnitsModule,
-    EquipmentsModule,
+    UsersModule,
+    ZonesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

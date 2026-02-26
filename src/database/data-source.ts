@@ -9,8 +9,9 @@ const options: DataSourceOptions & SeederOptions = {
   username: process.env.DATABASE_USERNAME!,
   password: process.env.DATABASE_PASSWORD!,
   database: process.env.DATABASE_DATABASE!,
-  entities: ["src/**/*.entity.ts"],
-  seedTracking: true,
+  entities: ["src/**/*.entity{.ts,.js}"],
+  seeds: ["src/database/seeds/**/*{.ts,.js}"],
+  factories: ["src/database/factories/**/*{.ts,.js}"],
 };
 
 export const AppDataSource = new DataSource(options);

@@ -9,6 +9,6 @@ import { UnitsModule } from "../units/units.module";
   imports: [TypeOrmModule.forFeature([Equipment]), UnitsModule],
   controllers: [EquipmentsController],
   providers: [EquipmentsService],
-  exports: [TypeOrmModule],
+  exports: [TypeOrmModule, EquipmentsService],
 })
 export class EquipmentsModule {}

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from "@nestjs/common";
 import { CreateUnitDto } from "./dto/create-unit.dto";
 import { UpdateUnitDto } from "./dto/update-unit.dto";
 import { MoveDto } from "../shared/dto/move.dto";
@@ -19,7 +23,13 @@ export class UnitsService {
   ) {}
 
   public async create(dto: CreateUnitDto): Promise<ResponseDto<string>> {
-    const zone = await this.zonesService.findOne(dto.zoneId);
+    const zoneResponse = await this.zonesService.findOne(dto.zoneId);
+
+    if ("error" in zoneResponse) {
+      throw new InternalServerErrorException(zoneResponse.error);
+    }
+
+    const { result: zone } = zoneResponse;
 
     const maxPosition = await getMaxPosition(this.unitRepo, "zoneId", zone.id);
 
@@ -30,7 +40,7 @@ export class UnitsService {
     });
 
     return {
-      message: "Unit created successfully.",
+      message: "یونیت با موفقیت ایجاد شد.",
       result: createdUnit.id,
     };
   }
@@ -39,12 +49,12 @@ export class UnitsService {
     const units = await this.unitRepo.find({ order: { position: "ASC" } });
 
     return {
-      message: "Units found successfully.",
+      message: "یونیت‌ها با موفقیت دریافت شدند.",
       result: units,
     };
   }
 
-  public async findOne(id: string): Promise<Unit> {
+  private async getUnitOrFail(id: string): Promise<Unit> {
     const unit = await this.unitRepo.findOne({ where: { id } });
 
     if (!unit) {
@@ -54,23 +64,32 @@ export class UnitsService {
     return unit;
   }
 
+  public async findOne(id: string): Promise<ResponseDto<Unit>> {
+    const unit = await this.getUnitOrFail(id);
+
+    return {
+      message: "یونیت با موفقیت دریافت شد.",
+      result: unit,
+    };
+  }
+
   public async update(id: string, dto: UpdateUnitDto): Promise<ResponseDto> {
-    const unit = await this.findOne(id);
+    const unit = await this.getUnitOrFail(id);
 
     const updatedUnit = assignDefinedValues(unit, dto);
     await this.unitRepo.save(updatedUnit);
 
-    return { message: "Unit updated successfully." };
+    return { message: "یونیت با موفقیت به‌روزرسانی شد." };
   }
 
   public async remove(id: string): Promise<ResponseDto> {
     await this.unitRepo.delete(id);
 
-    return { message: "Unit removed successfully." };
+    return { message: "یونیت با موفقیت حذف شد." };
   }
 
   public async move(id: string, dto: MoveDto): Promise<ResponseDto> {
-    const active = await this.findOne(id);
+    const active = await this.getUnitOrFail(id);
 
     const over = await this.unitRepo.findOne({
       where: { id: dto.overId },
@@ -83,6 +102,6 @@ export class UnitsService {
     const units = await moveEntities(this.unitRepo, active, over);
     await this.unitRepo.save([active, over, ...units]);
 
-    return { message: "Unit moved successfully." };
+    return { message: "یونیت با موفقیت جابه‌جا شد." };
   }
 }

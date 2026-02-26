@@ -55,7 +55,7 @@ export class AuthService {
     try {
       await this.userRepo.save(user);
 
-      return { message: "Signed up successfully." };
+      return { message: "ثبت‌نام با موفقیت انجام شد." };
     } catch {
       throw new InternalServerErrorException();
     }
@@ -85,7 +85,7 @@ export class AuthService {
     const { password: _1, refreshToken: _2, ...safeUser } = foundUser;
 
     return {
-      message: "Signed in successfully.",
+      message: "ورود با موفقیت انجام شد.",
       result: safeUser,
     };
   }
@@ -95,11 +95,16 @@ export class AuthService {
 
     this.clearCookies(res);
 
-    return { message: "Signed out successfully." };
+    return { message: "خروج با موفقیت انجام شد." };
   }
 
-  public verify(): ResponseDto {
-    return { message: "Authenticated." };
+  public verify(user: User): ResponseDto<SafeUser> {
+    const { password: _1, refreshToken: _2, ...safeUser } = user;
+
+    return {
+      message: "احراز هویت انجام شد.",
+      result: safeUser,
+    };
   }
 
   public async refresh(
@@ -127,7 +132,7 @@ export class AuthService {
     const accessToken = this.generateAccessToken(foundUser);
     this.setAccessTokenCookie(res, accessToken);
 
-    return { message: "Access token refreshed." };
+    return { message: "توکن دسترسی با موفقیت به‌روزرسانی شد." };
   }
 
   public clearCookies(res: Response): void {

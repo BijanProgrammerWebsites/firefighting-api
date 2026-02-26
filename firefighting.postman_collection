@@ -1,0 +1,1451 @@
+{
+  "info": {
+    "_postman_id": "724b49c0-d83e-46ec-9a9d-5518105b99a2",
+    "name": "Firefighting",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "11133494"
+  },
+  "item": [
+    {
+      "name": "Public",
+      "item": [
+        {
+          "name": "Get Picture",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/pictures/20260219140758-dd90869c-24b1-4a77-98ea-4852a5f2362e.jpg",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "pictures",
+                "20260219140758-dd90869c-24b1-4a77-98ea-4852a5f2362e.jpg"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Root",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/",
+              "host": [
+                "{{BASE_URL}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Sign Up",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"username\": \"Ali\",\r\n    \"password\": \"1234\",\r\n    \"role\": \"viewer\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/sign-up/",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "sign-up",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Sign In",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"username\": \"BijanProgrammer\",\r\n    \"password\": \"1234\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/sign-in/",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "sign-in",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Sign Out",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/auth/sign-out/",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "sign-out",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/auth/verify/",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "verify",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/auth/refresh/",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "refresh",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "Find All Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/users",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/users/me",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "users",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"id\": \"f6724c62-27a3-4f18-a275-199d0a298778\",\r\n    \"role\": \"admin\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/users/update/",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "users",
+                "update",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Refinery",
+      "item": [
+        {
+          "name": "Find the Only One",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/refinery",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "refinery"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update the Only One",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Refinery 2\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/refinery",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "refinery"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Picture",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "picture",
+                  "type": "file",
+                  "uuid": "b90e78df-e5d5-4a42-9fe2-2dd396b52969",
+                  "src": "/L:/Backup - Desktop/Pictures/Rock.jpg"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/refinery/picture",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "refinery",
+                "picture"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Remove Picture",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/refinery/picture",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "refinery",
+                "picture"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Site",
+      "item": [
+        {
+          "name": "Find All",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/sites",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "sites"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Find One",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/sites/857c1253-318e-4e19-80c9-bcb38b204649",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "sites",
+                "857c1253-318e-4e19-80c9-bcb38b204649"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"Site 5\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/sites",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "sites"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"Site 1 Edited\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/sites/857c1253-318e-4e19-80c9-bcb38b204649",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "sites",
+                "857c1253-318e-4e19-80c9-bcb38b204649"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Remove",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/sites/58a72386-90e2-41d1-baa5-9a78d1ef0bee",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "sites",
+                "58a72386-90e2-41d1-baa5-9a78d1ef0bee"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Move",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"overId\": \"97ff3d74-3df6-4150-8762-925139756df8\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/sites/857c1253-318e-4e19-80c9-bcb38b204649/move",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "sites",
+                "857c1253-318e-4e19-80c9-bcb38b204649",
+                "move"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Zone",
+      "item": [
+        {
+          "name": "Find All",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/zones",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "zones"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Find One",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/zones/857c1253-318e-4e19-80c9-bcb38b204649",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "zones",
+                "857c1253-318e-4e19-80c9-bcb38b204649"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"siteId\": \"857c1253-318e-4e19-80c9-bcb38b204649\",\r\n    \"title\": \"Zone 1\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/zones",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "zones"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"Zone 1 Edited\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/zones/857c1253-318e-4e19-80c9-bcb38b204649",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "zones",
+                "857c1253-318e-4e19-80c9-bcb38b204649"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Remove",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/zones/58a72386-90e2-41d1-baa5-9a78d1ef0bee",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "zones",
+                "58a72386-90e2-41d1-baa5-9a78d1ef0bee"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Move",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"overId\": \"97ff3d74-3df6-4150-8762-925139756df8\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/zones/857c1253-318e-4e19-80c9-bcb38b204649/move",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "zones",
+                "857c1253-318e-4e19-80c9-bcb38b204649",
+                "move"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Unit",
+      "item": [
+        {
+          "name": "Find All",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/units",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "units"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Find One",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/units/857c1253-318e-4e19-80c9-bcb38b204649",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "units",
+                "857c1253-318e-4e19-80c9-bcb38b204649"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"zoneId\": \"857c1253-318e-4e19-80c9-bcb38b204649\",\r\n    \"title\": \"Unit 1\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/units",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "units"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"Unit 1 Edited\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/units/857c1253-318e-4e19-80c9-bcb38b204649",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "units",
+                "857c1253-318e-4e19-80c9-bcb38b204649"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Remove",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/units/58a72386-90e2-41d1-baa5-9a78d1ef0bee",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "units",
+                "58a72386-90e2-41d1-baa5-9a78d1ef0bee"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Move",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"overId\": \"97ff3d74-3df6-4150-8762-925139756df8\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/units/857c1253-318e-4e19-80c9-bcb38b204649/move",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "units",
+                "857c1253-318e-4e19-80c9-bcb38b204649",
+                "move"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Equipment",
+      "item": [
+        {
+          "name": "Find All",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/equipments",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "equipments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Find One",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/equipments/857c1253-318e-4e19-80c9-bcb38b204649",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "equipments",
+                "857c1253-318e-4e19-80c9-bcb38b204649"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"unitId\": \"857c1253-318e-4e19-80c9-bcb38b204649\",\r\n    \"title\": \"Equipment 1\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/equipments",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "equipments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"Equipment 1 Edited\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/equipments/857c1253-318e-4e19-80c9-bcb38b204649",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "equipments",
+                "857c1253-318e-4e19-80c9-bcb38b204649"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Remove",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/equipments/58a72386-90e2-41d1-baa5-9a78d1ef0bee",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "equipments",
+                "58a72386-90e2-41d1-baa5-9a78d1ef0bee"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Move",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"overId\": \"97ff3d74-3df6-4150-8762-925139756df8\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/equipments/857c1253-318e-4e19-80c9-bcb38b204649/move",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "equipments",
+                "857c1253-318e-4e19-80c9-bcb38b204649",
+                "move"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Standard",
+      "item": [
+        {
+          "name": "Create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"Standard 1\",\r\n    \"questions\": [\r\n        \"Question A\",\r\n        \"Question B\"\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/standards",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "standards"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Find All",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/standards",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "standards"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Find One",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/standards/857c1253-318e-4e19-80c9-bcb38b204649",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "standards",
+                "857c1253-318e-4e19-80c9-bcb38b204649"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"Standard 1 Edited\",\r\n    \"questions\": [\r\n        \"Question A\",\r\n        \"Question B\",\r\n        \"Question C\"\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/standards/857c1253-318e-4e19-80c9-bcb38b204649",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "standards",
+                "857c1253-318e-4e19-80c9-bcb38b204649"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Remove",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/standards/58a72386-90e2-41d1-baa5-9a78d1ef0bee",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "standards",
+                "58a72386-90e2-41d1-baa5-9a78d1ef0bee"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Template",
+      "item": [
+        {
+          "name": "Create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"standardId\": \"857c1253-318e-4e19-80c9-bcb38b204649\",\r\n    \"title\": \"Template 1\",\r\n    \"description\": \"Template description\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/templates",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "templates"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Find All",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/templates",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "templates"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Find One",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/templates/857c1253-318e-4e19-80c9-bcb38b204649",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "templates",
+                "857c1253-318e-4e19-80c9-bcb38b204649"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"Template 1 Edited\",\r\n    \"description\": \"Template description edited\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/templates/857c1253-318e-4e19-80c9-bcb38b204649",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "templates",
+                "857c1253-318e-4e19-80c9-bcb38b204649"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Remove",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/templates/58a72386-90e2-41d1-baa5-9a78d1ef0bee",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "templates",
+                "58a72386-90e2-41d1-baa5-9a78d1ef0bee"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Question",
+      "item": [
+        {
+          "name": "Find All",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/questions",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "questions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Find One",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/questions/857c1253-318e-4e19-80c9-bcb38b204649",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "questions",
+                "857c1253-318e-4e19-80c9-bcb38b204649"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create (via standards only, will return 400)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/questions",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "questions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update (via standards only, will return 400)",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/questions/857c1253-318e-4e19-80c9-bcb38b204649",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "questions",
+                "857c1253-318e-4e19-80c9-bcb38b204649"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Remove (via standards only, will return 400)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/questions/58a72386-90e2-41d1-baa5-9a78d1ef0bee",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "questions",
+                "58a72386-90e2-41d1-baa5-9a78d1ef0bee"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Answer",
+      "item": [
+        {
+          "name": "Create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"inspectionId\": \"857c1253-318e-4e19-80c9-bcb38b204649\",\r\n    \"questionId\": \"97ff3d74-3df6-4150-8762-925139756df8\",\r\n    \"status\": \"ok\",\r\n    \"text\": \"Everything is OK.\",\r\n    \"picture\": null\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/answers",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "answers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Find All",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/answers",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "answers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Find One",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/answers/857c1253-318e-4e19-80c9-bcb38b204649",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "answers",
+                "857c1253-318e-4e19-80c9-bcb38b204649"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"status\": \"warning\",\r\n    \"text\": \"Some issues detected.\",\r\n    \"picture\": null\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/answers/857c1253-318e-4e19-80c9-bcb38b204649",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "answers",
+                "857c1253-318e-4e19-80c9-bcb38b204649"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Remove",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/answers/58a72386-90e2-41d1-baa5-9a78d1ef0bee",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "answers",
+                "58a72386-90e2-41d1-baa5-9a78d1ef0bee"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Inspection",
+      "item": [
+        {
+          "name": "Create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"equipmentId\": \"857c1253-318e-4e19-80c9-bcb38b204649\",\r\n    \"answers\": [\r\n        {\r\n            \"questionId\": \"97ff3d74-3df6-4150-8762-925139756df8\",\r\n            \"status\": \"ok\",\r\n            \"text\": \"Equipment looks good.\",\r\n            \"picture\": null\r\n        }\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/inspections",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "inspections"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Find All",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/inspections",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "inspections"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Find One",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/inspections/857c1253-318e-4e19-80c9-bcb38b204649",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "inspections",
+                "857c1253-318e-4e19-80c9-bcb38b204649"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"answers\": [\r\n        {\r\n            \"questionId\": \"97ff3d74-3df6-4150-8762-925139756df8\",\r\n            \"status\": \"warning\",\r\n            \"text\": \"Needs attention soon.\",\r\n            \"picture\": null\r\n        }\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/inspections/857c1253-318e-4e19-80c9-bcb38b204649",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "inspections",
+                "857c1253-318e-4e19-80c9-bcb38b204649"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Remove",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/inspections/58a72386-90e2-41d1-baa5-9a78d1ef0bee",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "inspections",
+                "58a72386-90e2-41d1-baa5-9a78d1ef0bee"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "http://localhost:5000"
+    }
+  ]
+}
