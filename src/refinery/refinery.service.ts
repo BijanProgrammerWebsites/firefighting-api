@@ -16,7 +16,7 @@ export class RefineryService {
     const [refinery] = await this.refineryRepo.find();
 
     return {
-      message: "Refinery found successfully.",
+      message: "پالایشگاه با موفقیت دریافت شد.",
       result: refinery,
     };
   }
@@ -26,7 +26,7 @@ export class RefineryService {
 
     await this.refineryRepo.update({ id: refinery.id }, dto);
 
-    return { message: "Refinery updated successfully." };
+    return { message: "پالایشگاه با موفقیت به‌روزرسانی شد." };
   }
 
   public async updatePicture(picture: string): Promise<ResponseDto> {
@@ -34,7 +34,7 @@ export class RefineryService {
 
     await this.refineryRepo.update({ id: refinery.id }, { picture });
 
-    return { message: "Refinery picture updated successfully." };
+    return { message: "تصویر پالایشگاه با موفقیت به‌روزرسانی شد." };
   }
 
   public async removePicture(): Promise<ResponseDto> {
@@ -42,6 +42,6 @@ export class RefineryService {
 
     await this.refineryRepo.update({ id: refinery.id }, { picture: null });
 
-    return { message: "Refinery picture removed successfully." };
+    return { message: "تصویر پالایشگاه با موفقیت حذف شد." };
   }
 }

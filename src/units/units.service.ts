@@ -30,7 +30,7 @@ export class UnitsService {
     });
 
     return {
-      message: "Unit created successfully.",
+      message: "یونیت با موفقیت ایجاد شد.",
       result: createdUnit.id,
     };
   }
@@ -39,7 +39,7 @@ export class UnitsService {
     const units = await this.unitRepo.find({ order: { position: "ASC" } });
 
     return {
-      message: "Units found successfully.",
+      message: "یونیت‌ها با موفقیت دریافت شدند.",
       result: units,
     };
   }
@@ -60,13 +60,13 @@ export class UnitsService {
     const updatedUnit = assignDefinedValues(unit, dto);
     await this.unitRepo.save(updatedUnit);
 
-    return { message: "Unit updated successfully." };
+    return { message: "یونیت با موفقیت به‌روزرسانی شد." };
   }
 
   public async remove(id: string): Promise<ResponseDto> {
     await this.unitRepo.delete(id);
 
-    return { message: "Unit removed successfully." };
+    return { message: "یونیت با موفقیت حذف شد." };
   }
 
   public async move(id: string, dto: MoveDto): Promise<ResponseDto> {
@@ -83,6 +83,6 @@ export class UnitsService {
     const units = await moveEntities(this.unitRepo, active, over);
     await this.unitRepo.save([active, over, ...units]);
 
-    return { message: "Unit moved successfully." };
+    return { message: "یونیت با موفقیت جابه‌جا شد." };
   }
 }

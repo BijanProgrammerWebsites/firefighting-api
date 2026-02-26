@@ -30,7 +30,7 @@ export class ZonesService {
     });
 
     return {
-      message: "Zone created successfully.",
+      message: "زون با موفقیت ایجاد شد.",
       result: createdZone.id,
     };
   }
@@ -39,7 +39,7 @@ export class ZonesService {
     const zones = await this.zoneRepo.find({ order: { position: "ASC" } });
 
     return {
-      message: "Zones found successfully.",
+      message: "زون‌ها با موفقیت دریافت شدند.",
       result: zones,
     };
   }
@@ -60,13 +60,13 @@ export class ZonesService {
     const updatedZone = assignDefinedValues(zone, dto);
     await this.zoneRepo.save(updatedZone);
 
-    return { message: "Zone updated successfully." };
+    return { message: "زون با موفقیت به‌روزرسانی شد." };
   }
 
   public async remove(id: string): Promise<ResponseDto> {
     await this.zoneRepo.delete(id);
 
-    return { message: "Zone removed successfully." };
+    return { message: "زون با موفقیت حذف شد." };
   }
 
   public async move(id: string, dto: MoveDto): Promise<ResponseDto> {
@@ -83,6 +83,6 @@ export class ZonesService {
     const zones = await moveEntities(this.zoneRepo, active, over);
     await this.zoneRepo.save([active, over, ...zones]);
 
-    return { message: "Zone moved successfully." };
+    return { message: "زون با موفقیت جابه‌جا شد." };
   }
 }

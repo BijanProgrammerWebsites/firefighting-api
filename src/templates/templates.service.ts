@@ -33,7 +33,7 @@ export class TemplatesService {
     });
 
     return {
-      message: "Template created successfully.",
+      message: "قالب با موفقیت ایجاد شد.",
       result: createdTemplate.id,
     };
   }
@@ -45,7 +45,7 @@ export class TemplatesService {
     });
 
     return {
-      message: "Templates found successfully.",
+      message: "قالب‌ها با موفقیت دریافت شدند.",
       result: templates,
     };
   }
@@ -72,12 +72,12 @@ export class TemplatesService {
     const updatedTemplate = assignDefinedValues(template, dto);
     await this.templateRepo.save(updatedTemplate);
 
-    return { message: "Template updated successfully." };
+    return { message: "قالب با موفقیت به‌روزرسانی شد." };
   }
 
   public async remove(id: string): Promise<ResponseDto> {
     await this.templateRepo.delete(id);
 
-    return { message: "Template removed successfully." };
+    return { message: "قالب با موفقیت حذف شد." };
   }
 }

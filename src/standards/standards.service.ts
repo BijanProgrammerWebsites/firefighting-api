@@ -29,7 +29,7 @@ export class StandardsService {
     }
 
     return {
-      message: "Standard created successfully.",
+      message: "استاندارد با موفقیت ایجاد شد.",
       result: standard.id,
     };
   }
@@ -41,7 +41,7 @@ export class StandardsService {
     });
 
     return {
-      message: "Standards found successfully.",
+      message: "استانداردها با موفقیت دریافت شدند.",
       result: standards,
     };
   }
@@ -88,7 +88,7 @@ export class StandardsService {
       }
     }
 
-    return { message: "Standard updated successfully." };
+    return { message: "استاندارد با موفقیت به‌روزرسانی شد." };
   }
 
   public async remove(id: string): Promise<ResponseDto> {
@@ -104,6 +104,6 @@ export class StandardsService {
 
     await this.standardRepo.remove(standard);
 
-    return { message: "Standard removed successfully." };
+    return { message: "استاندارد با موفقیت حذف شد." };
   }
 }

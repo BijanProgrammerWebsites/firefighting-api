@@ -34,7 +34,7 @@ export class EquipmentsService {
     });
 
     return {
-      message: "Equipment created successfully.",
+      message: "تجهیز با موفقیت ایجاد شد.",
       result: createdEquipment.id,
     };
   }
@@ -45,7 +45,7 @@ export class EquipmentsService {
     });
 
     return {
-      message: "Equipments found successfully.",
+      message: "تجهیزات با موفقیت دریافت شدند.",
       result: equipments,
     };
   }
@@ -69,13 +69,13 @@ export class EquipmentsService {
     const updatedEquipment = assignDefinedValues(equipment, dto);
     await this.equipmentRepo.save(updatedEquipment);
 
-    return { message: "Equipment updated successfully." };
+    return { message: "تجهیز با موفقیت به‌روزرسانی شد." };
   }
 
   public async remove(id: string): Promise<ResponseDto> {
     await this.equipmentRepo.delete(id);
 
-    return { message: "Equipment removed successfully." };
+    return { message: "تجهیز با موفقیت حذف شد." };
   }
 
   public async move(id: string, dto: MoveDto): Promise<ResponseDto> {
@@ -92,6 +92,6 @@ export class EquipmentsService {
     const equipments = await moveEntities(this.equipmentRepo, active, over);
     await this.equipmentRepo.save([active, over, ...equipments]);
 
-    return { message: "Equipment moved successfully." };
+    return { message: "تجهیز با موفقیت جابه‌جا شد." };
   }
 }

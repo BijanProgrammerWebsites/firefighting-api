@@ -24,14 +24,14 @@ export class UsersService {
     const users = await this.userRepo.find();
 
     return {
-      message: "User fetched successfully.",
+      message: "کاربران با موفقیت دریافت شدند.",
       result: users,
     };
   }
 
   public me(user: User): ResponseDto<SafeUser> {
     return {
-      message: "User fetched successfully.",
+      message: "کاربر با موفقیت دریافت شد.",
       result: {
         id: user.id,
         username: user.username,
@@ -52,6 +52,6 @@ export class UsersService {
 
     await this.userRepo.update({ id: dto.id }, dto);
 
-    return { message: "User updated successfully." };
+    return { message: "کاربر با موفقیت به‌روزرسانی شد." };
   }
 }

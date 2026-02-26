@@ -35,7 +35,7 @@ export class AnswersService {
     });
 
     return {
-      message: "Answers found successfully.",
+      message: "پاسخ‌ها با موفقیت دریافت شدند.",
       result: answers,
     };
   }

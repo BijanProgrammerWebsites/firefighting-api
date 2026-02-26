@@ -55,7 +55,7 @@ export class InspectionsService {
     }
 
     return {
-      message: "Inspection created successfully.",
+      message: "بازرسی با موفقیت ایجاد شد.",
       result: inspection.id,
     };
   }
@@ -67,7 +67,7 @@ export class InspectionsService {
     });
 
     return {
-      message: "Inspections found successfully.",
+      message: "بازرسی‌ها با موفقیت دریافت شدند.",
       result: inspections,
     };
   }
@@ -148,7 +148,7 @@ export class InspectionsService {
 
     await this.inspectionRepo.save(inspection);
 
-    return { message: "Inspection updated successfully." };
+    return { message: "بازرسی با موفقیت به‌روزرسانی شد." };
   }
 
   public async remove(id: string): Promise<ResponseDto> {
@@ -164,6 +164,6 @@ export class InspectionsService {
 
     await this.inspectionRepo.remove(inspection);
 
-    return { message: "Inspection removed successfully." };
+    return { message: "بازرسی با موفقیت حذف شد." };
   }
 }

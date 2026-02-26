@@ -25,7 +25,7 @@ export class QuestionsService {
     const questions = await this.questionRepo.find({ relations: ["standard"] });
 
     return {
-      message: "Questions found successfully.",
+      message: "سؤالات با موفقیت دریافت شدند.",
       result: questions,
     };
   }

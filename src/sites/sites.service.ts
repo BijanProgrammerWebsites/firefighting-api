@@ -35,7 +35,7 @@ export class SitesService {
     });
 
     return {
-      message: "Site created successfully.",
+      message: "سایت با موفقیت ایجاد شد.",
       result: createdSite.id,
     };
   }
@@ -44,7 +44,7 @@ export class SitesService {
     const sites = await this.siteRepo.find({ order: { position: "ASC" } });
 
     return {
-      message: "Sites found successfully.",
+      message: "سایت‌ها با موفقیت دریافت شدند.",
       result: sites,
     };
   }
@@ -65,13 +65,13 @@ export class SitesService {
     const updatedSite = assignDefinedValues(site, dto);
     await this.siteRepo.save(updatedSite);
 
-    return { message: "Site updated successfully." };
+    return { message: "سایت با موفقیت به‌روزرسانی شد." };
   }
 
   public async remove(id: string): Promise<ResponseDto> {
     await this.siteRepo.delete(id);
 
-    return { message: "Site removed successfully." };
+    return { message: "سایت با موفقیت حذف شد." };
   }
 
   public async move(id: string, dto: MoveDto): Promise<ResponseDto> {
@@ -88,6 +88,6 @@ export class SitesService {
     const sites = await moveEntities(this.siteRepo, active, over);
     await this.siteRepo.save([active, over, ...sites]);
 
-    return { message: "Site moved successfully." };
+    return { message: "سایت با موفقیت جابه‌جا شد." };
   }
 }
