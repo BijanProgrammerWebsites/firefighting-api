@@ -31,7 +31,6 @@ async function bootstrap() {
       transform: true,
       whitelist: true,
       errorHttpStatusCode: HttpStatus.I_AM_A_TEAPOT,
-      forbidNonWhitelisted: true,
       forbidUnknownValues: true,
     }),
   );
