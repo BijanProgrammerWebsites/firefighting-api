@@ -17,9 +17,11 @@ export class Answer {
   @Column("text", { nullable: true })
   picture: string | null;
 
-  @ManyToOne(() => Inspection, (inspection) => inspection.answers)
+  @ManyToOne(() => Inspection, (inspection) => inspection.answers, {
+    onDelete: "CASCADE",
+  })
   inspection: Inspection;
 
-  @ManyToOne(() => Question)
+  @ManyToOne(() => Question, { onDelete: "CASCADE" })
   question: Question;
 }
