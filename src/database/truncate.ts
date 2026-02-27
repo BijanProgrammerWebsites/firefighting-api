@@ -1,7 +1,9 @@
 import { AppDataSource } from "./data-source";
 
 async function truncate() {
-  const dataSource = await AppDataSource.initialize();
+  const dataSource = await AppDataSource.setOptions({
+    synchronize: false,
+  }).initialize();
 
   await dataSource.query(`
     TRUNCATE TABLE
