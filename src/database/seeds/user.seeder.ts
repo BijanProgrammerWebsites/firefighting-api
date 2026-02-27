@@ -9,7 +9,7 @@ export class UserSeeder implements Seeder {
     const repo = dataSource.getRepository(User);
 
     const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash("admin", salt);
+    const hashedPassword = await bcrypt.hash("1234", salt);
 
     await repo.save([
       { username: "admin", password: hashedPassword, role: Role.ADMIN },
