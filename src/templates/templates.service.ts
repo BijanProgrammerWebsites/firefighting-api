@@ -52,10 +52,7 @@ export class TemplatesService {
   }
 
   private async getTemplateOrFail(id: string): Promise<Template> {
-    const template = await this.templateRepo.findOne({
-      where: { id },
-      relations: ["standard"],
-    });
+    const template = await this.templateRepo.findOne({ where: { id } });
 
     if (!template) {
       throw new NotFoundException("Template not found.");

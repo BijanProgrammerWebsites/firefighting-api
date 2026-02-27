@@ -4,6 +4,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { Standard } from "../../standards/entities/standard.entity";
 import { Equipment } from "../../equipments/entities/equipment.entity";
@@ -24,6 +25,9 @@ export class Template {
 
   @ManyToOne(() => Standard)
   standard: Standard;
+
+  @RelationId((template: Template) => template.standard)
+  standardId: number;
 
   @OneToMany(() => Equipment, (equipment) => equipment.template)
   equipments: Equipment[];
