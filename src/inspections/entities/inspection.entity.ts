@@ -16,17 +16,17 @@ export class Inspection {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @CreateDateColumn()
-  createdDate: Date;
-
-  @UpdateDateColumn()
-  updatedDate: Date;
-
   @Column({ type: "enum", enum: Status })
   status: Status;
 
   @Column({ type: "float" })
   score: number;
+
+  @CreateDateColumn()
+  createdDate: Date;
+
+  @UpdateDateColumn()
+  updatedDate: Date;
 
   @ManyToOne(() => Equipment, (equipment) => equipment.inspections)
   equipment: Equipment;
