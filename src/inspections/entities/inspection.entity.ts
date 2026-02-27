@@ -28,7 +28,9 @@ export class Inspection {
   @UpdateDateColumn()
   updatedDate: Date;
 
-  @ManyToOne(() => Equipment, (equipment) => equipment.inspections)
+  @ManyToOne(() => Equipment, (equipment) => equipment.inspections, {
+    onDelete: "CASCADE",
+  })
   equipment: Equipment;
 
   @OneToMany(() => Answer, (answer) => answer.inspection, { cascade: true })

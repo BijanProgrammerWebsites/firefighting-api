@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from "@nestjs/common";
 import { CreateStandardDto } from "./dto/create-standard.dto";
 import { UpdateStandardDto } from "./dto/update-standard.dto";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -6,6 +10,7 @@ import { Standard } from "./entities/standard.entity";
 import { Repository } from "typeorm";
 import { Question } from "../questions/entities/question.entity";
 import { ResponseDto } from "../shared/dto/response.dto";
+import { Template } from "../templates/entities/template.entity";
 
 @Injectable()
 export class StandardsService {
@@ -14,6 +19,8 @@ export class StandardsService {
     private readonly standardRepo: Repository<Standard>,
     @InjectRepository(Question)
     private readonly questionRepo: Repository<Question>,
+    @InjectRepository(Template)
+    private readonly templateRepo: Repository<Template>,
   ) {}
 
   public async create(dto: CreateStandardDto): Promise<ResponseDto<string>> {
@@ -102,6 +109,16 @@ export class StandardsService {
 
   public async remove(id: string): Promise<ResponseDto> {
     const standard = await this.getStandardOrFail(id);
+
+    const templatesUsingStandard = await this.templateRepo.count({
+      where: { standard: { id } as any },
+    });
+
+    if (templatesUsingStandard > 0) {
+      throw new BadRequestException(
+        `استاندارد در ${templatesUsingStandard} قالب استفاده شده و قابل حذف نیست.`,
+      );
+    }
 
     const existingQuestions = await this.questionRepo.find({
       where: { standard: { id } as any },

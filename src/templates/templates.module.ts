@@ -9,6 +9,6 @@ import { Standard } from "../standards/entities/standard.entity";
   imports: [TypeOrmModule.forFeature([Template, Standard])],
   controllers: [TemplatesController],
   providers: [TemplatesService],
-  exports: [TypeOrmModule],
+  exports: [TypeOrmModule, TemplatesService],
 })
 export class TemplatesModule {}
