@@ -84,16 +84,19 @@ export class ResourcesSeeder implements Seeder {
       {
         title: "بازرسی ماهانه کپسول آتش‌نشانی",
         description: "چک‌لیست استاندارد برای کپسول‌های قابل‌حمل آتش‌نشانی.",
+        inspectionPeriod: 30,
         standard: extinguishersStd,
       },
       {
         title: "بازرسی فصلی هیدرانت",
         description: "چک‌لیست برای هیدرانت‌ها و قرقره‌های شیلنگ.",
+        inspectionPeriod: 90,
         standard: hydrantsStd,
       },
       {
         title: "بازدید خروجی‌های اضطراری",
         description: "چک‌لیست برای خروجی‌ها، روشنایی و علائم ایمنی.",
+        inspectionPeriod: 30,
         standard: exitsStd,
       },
     ]);
@@ -156,11 +159,45 @@ export class ResourcesSeeder implements Seeder {
         template: exitsTpl,
         unit: unitC1,
       },
+      {
+        position: 2,
+        title: "کپسول EF-003",
+        template: extinguisherTpl,
+        unit: unitB1,
+      },
     ]);
 
-    // --- Inspections + answers with varied statuses ---
+    // --- Inspections + answers with varied statuses and buckets ---
+    const now = new Date();
+    const daysAgo = (days: number) =>
+      new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+
+    /**
+     * We choose createdDate values so that, given each template's
+     * inspectionPeriodDays, the next inspection falls into different
+     * dashboard buckets:
+     *
+     * - EF-001 (30d period): lastInspection = now - 40d -> overdue
+     * - EF-002 (30d period): lastInspection = now - 30d -> due today
+     * - HY-010 (90d period): lastInspection = now - 85d -> due in 5d -> this week
+     * - EX-01 (30d period): lastInspection = now - 20d -> due in 10d -> next week
+     * - EF-003 (30d period): lastInspection = now -> due in 30d -> later
+     */
+    const inspectionCreatedDatesByTitle: Record<string, Date> = {
+      "کپسول EF-001": daysAgo(40),
+      "کپسول EF-002": daysAgo(30),
+      "هیدرانت HY-010": daysAgo(85),
+      "درِ خروج EX-01": daysAgo(20),
+      "کپسول EF-003": now,
+    };
+
     for (const equipment of equipments) {
-      const inspection = await inspectionRepo.save({ equipment });
+      const createdDate = inspectionCreatedDatesByTitle[equipment.title] ?? now;
+
+      const inspection = await inspectionRepo.save({
+        equipment,
+        createdDate,
+      });
 
       let relatedQuestions: Question[];
       switch (equipment.template.id) {

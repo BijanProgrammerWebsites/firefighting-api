@@ -58,7 +58,7 @@ export class UnitsService {
     const unit = await this.unitRepo.findOne({ where: { id } });
 
     if (!unit) {
-      throw new NotFoundException("Unit not found.");
+      throw new NotFoundException("یونیت پیدا نشد.");
     }
 
     return unit;
@@ -96,7 +96,7 @@ export class UnitsService {
     });
 
     if (!over) {
-      throw new NotFoundException("Over not found.");
+      throw new NotFoundException("مورد مقصد پیدا نشد.");
     }
 
     const units = await moveEntities(this.unitRepo, active, over);

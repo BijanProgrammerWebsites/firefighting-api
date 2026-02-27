@@ -13,12 +13,16 @@ import { getMaxPosition, moveEntities } from "../shared/utils/position.utils";
 import { ResponseDto } from "../shared/dto/response.dto";
 import { assignDefinedValues } from "../shared/utils/object.utils";
 import { UnitsService } from "../units/units.service";
+import { Inspection } from "../inspections/entities/inspection.entity";
+import { BucketItemDto, BucketsDto } from "./dto/buckets.dto";
 
 @Injectable()
 export class EquipmentsService {
   public constructor(
     @InjectRepository(Equipment)
     private equipmentRepo: Repository<Equipment>,
+    @InjectRepository(Inspection)
+    private inspectionRepo: Repository<Inspection>,
     private readonly unitsService: UnitsService,
   ) {}
 
@@ -60,11 +64,117 @@ export class EquipmentsService {
     };
   }
 
+  public async buckets(): Promise<ResponseDto<BucketsDto>> {
+    const equipments = await this.equipmentRepo.find({
+      relations: ["template"],
+      order: { position: "ASC" },
+    });
+
+    if (!equipments.length) {
+      return {
+        message: "داشبورد با موفقیت دریافت شد.",
+        result: {
+          today: [],
+          next7Days: [],
+          next30Days: [],
+          overdue: [],
+        },
+      };
+    }
+
+    const equipmentIds = equipments.map((e) => e.id);
+
+    const lastInspections = await this.inspectionRepo
+      .createQueryBuilder("inspection")
+      .leftJoinAndSelect("inspection.equipment", "equipment")
+      .leftJoinAndSelect("inspection.answers", "answers")
+      .innerJoin(
+        (subQ) =>
+          subQ
+            .from(Inspection, "i")
+            .select('i."equipmentId"', "equipmentId")
+            .addSelect('MAX(i."createdDate")', "maxCreatedDate")
+            .groupBy('i."equipmentId"'),
+        "latest",
+        'latest."equipmentId" = inspection."equipmentId" AND latest."maxCreatedDate" = inspection."createdDate"',
+      )
+      .where('inspection."equipmentId" IN (:...equipmentIds)', { equipmentIds })
+      .getMany();
+
+    const lastInspectionMap = new Map<string, Inspection>();
+    for (const inspection of lastInspections) {
+      if (inspection.equipment?.id) {
+        lastInspectionMap.set(inspection.equipment.id, inspection);
+      }
+    }
+
+    const buckets: BucketsDto = {
+      today: [],
+      next7Days: [],
+      next30Days: [],
+      overdue: [],
+    };
+
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+
+    const msInDay = 24 * 60 * 60 * 1000;
+
+    for (const equipment of equipments) {
+      const lastInspection = lastInspectionMap.get(equipment.id) ?? null;
+
+      let bucketKey: keyof BucketsDto = "overdue";
+
+      if (!lastInspection) {
+        bucketKey = "overdue";
+      } else {
+        const lastInspectionAt = lastInspection.createdDate;
+        const inspectionPeriod = equipment.template.inspectionPeriod;
+
+        const nextInspectionAt = new Date(
+          lastInspectionAt.getTime() + inspectionPeriod * msInDay,
+        );
+
+        const startOfNextInspection = new Date(nextInspectionAt);
+        startOfNextInspection.setHours(0, 0, 0, 0);
+
+        const diffDays = Math.floor(
+          (startOfNextInspection.getTime() - startOfToday.getTime()) / msInDay,
+        );
+
+        if (diffDays < 0) {
+          bucketKey = "overdue";
+        } else if (diffDays === 0) {
+          bucketKey = "today";
+        } else if (diffDays > 0 && diffDays <= 7) {
+          bucketKey = "next7Days";
+        } else if (diffDays > 7 && diffDays <= 30) {
+          bucketKey = "next30Days";
+        } else {
+          // ignore items beyond 30 days
+          continue;
+        }
+      }
+
+      const item: BucketItemDto = {
+        equipment,
+        lastInspection,
+      };
+
+      buckets[bucketKey].push(item);
+    }
+
+    return {
+      message: "داشبورد با موفقیت دریافت شد.",
+      result: buckets,
+    };
+  }
+
   private async getEquipmentOrFail(id: string): Promise<Equipment> {
     const equipment = await this.equipmentRepo.findOne({ where: { id } });
 
     if (!equipment) {
-      throw new NotFoundException("Equipment not found.");
+      throw new NotFoundException("تجهیز پیدا نشد.");
     }
 
     return equipment;
@@ -105,7 +215,7 @@ export class EquipmentsService {
     });
 
     if (!over) {
-      throw new NotFoundException("Over not found.");
+      throw new NotFoundException("مورد مقصد پیدا نشد.");
     }
 
     const equipments = await moveEntities(this.equipmentRepo, active, over);

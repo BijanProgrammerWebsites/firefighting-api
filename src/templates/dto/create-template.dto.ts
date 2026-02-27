@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsString, IsUUID } from "class-validator";
+import {
+  IsInt,
+  IsNotEmpty,
+  IsPositive,
+  IsString,
+  IsUUID,
+} from "class-validator";
 import { Trim } from "../../shared/decorators/trim.decorator";
 
 export class CreateTemplateDto {
@@ -14,4 +20,8 @@ export class CreateTemplateDto {
   @Trim()
   @IsNotEmpty()
   description: string;
+
+  @IsInt()
+  @IsPositive()
+  inspectionPeriod: number;
 }

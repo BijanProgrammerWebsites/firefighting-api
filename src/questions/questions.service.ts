@@ -27,7 +27,7 @@ export class QuestionsService {
     });
 
     if (!question) {
-      throw new NotFoundException("Question not found.");
+      throw new NotFoundException("سؤال پیدا نشد.");
     }
 
     return question;

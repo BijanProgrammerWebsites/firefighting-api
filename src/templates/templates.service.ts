@@ -23,12 +23,13 @@ export class TemplatesService {
     });
 
     if (!standard) {
-      throw new NotFoundException("Standard not found.");
+      throw new NotFoundException("استاندارد پیدا نشد.");
     }
 
     const createdTemplate = await this.templateRepo.save({
       title: dto.title,
       description: dto.description,
+      inspectionPeriod: dto.inspectionPeriod,
       standard,
     });
 
@@ -51,13 +52,10 @@ export class TemplatesService {
   }
 
   private async getTemplateOrFail(id: string): Promise<Template> {
-    const template = await this.templateRepo.findOne({
-      where: { id },
-      relations: ["standard"],
-    });
+    const template = await this.templateRepo.findOne({ where: { id } });
 
     if (!template) {
-      throw new NotFoundException("Template not found.");
+      throw new NotFoundException("قالب پیدا نشد.");
     }
 
     return template;
@@ -77,8 +75,20 @@ export class TemplatesService {
     dto: UpdateTemplateDto,
   ): Promise<ResponseDto> {
     const template = await this.getTemplateOrFail(id);
-
     const updatedTemplate = assignDefinedValues(template, dto);
+
+    if (dto.standardId !== undefined) {
+      const standard = await this.standardRepo.findOne({
+        where: { id: dto.standardId },
+      });
+
+      if (!standard) {
+        throw new NotFoundException("استاندارد پیدا نشد.");
+      }
+
+      updatedTemplate.standard = standard;
+    }
+
     await this.templateRepo.save(updatedTemplate);
 
     return { message: "قالب با موفقیت به‌روزرسانی شد." };

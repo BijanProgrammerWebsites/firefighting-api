@@ -5,7 +5,7 @@ import {
 } from "@nestjs/common";
 import { NestFactory, Reflector } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
-import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 
 import cookieParser from "cookie-parser";
 

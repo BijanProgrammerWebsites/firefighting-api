@@ -58,7 +58,7 @@ export class ZonesService {
     const zone = await this.zoneRepo.findOne({ where: { id } });
 
     if (!zone) {
-      throw new NotFoundException("Zone not found.");
+      throw new NotFoundException("زون پیدا نشد.");
     }
 
     return zone;
@@ -96,7 +96,7 @@ export class ZonesService {
     });
 
     if (!over) {
-      throw new NotFoundException("Over not found.");
+      throw new NotFoundException("مورد مقصد پیدا نشد.");
     }
 
     const zones = await moveEntities(this.zoneRepo, active, over);

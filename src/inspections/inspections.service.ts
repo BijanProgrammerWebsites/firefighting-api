@@ -49,7 +49,7 @@ export class InspectionsService {
         });
 
         if (!question) {
-          throw new NotFoundException("Question not found.");
+          throw new NotFoundException("سؤال پیدا نشد.");
         }
 
         const answer = this.answerRepo.create({
@@ -91,7 +91,7 @@ export class InspectionsService {
     });
 
     if (!inspection) {
-      throw new NotFoundException("Inspection not found.");
+      throw new NotFoundException("بازرسی پیدا نشد.");
     }
 
     return inspection;
@@ -104,7 +104,7 @@ export class InspectionsService {
     });
 
     if (!inspection) {
-      throw new NotFoundException("Inspection not found.");
+      throw new NotFoundException("بازرسی پیدا نشد.");
     }
 
     return {
@@ -150,7 +150,7 @@ export class InspectionsService {
           });
 
           if (!question) {
-            throw new NotFoundException("Question not found.");
+            throw new NotFoundException("سؤال پیدا نشد.");
           }
 
           const answer = this.answerRepo.create({

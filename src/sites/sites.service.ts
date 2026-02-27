@@ -53,7 +53,7 @@ export class SitesService {
     const site = await this.siteRepo.findOne({ where: { id } });
 
     if (!site) {
-      throw new NotFoundException("Site not found.");
+      throw new NotFoundException("سایت پیدا نشد.");
     }
 
     return site;
@@ -91,7 +91,7 @@ export class SitesService {
     });
 
     if (!over) {
-      throw new NotFoundException("Over not found.");
+      throw new NotFoundException("مورد مقصد پیدا نشد.");
     }
 
     const sites = await moveEntities(this.siteRepo, active, over);

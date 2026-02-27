@@ -37,7 +37,7 @@ export class RefineryController {
   @UseInterceptors(FileInterceptor("picture"))
   public async updatePicture(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
-      throw new BadRequestException("No file uploaded");
+      throw new BadRequestException("هیچ فایلی آپلود نشده است.");
     }
 
     return this.refineryService.updatePicture(file.filename);
