@@ -28,7 +28,7 @@ import { JwtPayloadType } from "./types/jwt-payload.type";
 import { AuthService } from "./auth.service";
 import { RolesGuard } from "./guards/roles.guard";
 import { Roles } from "./decorators/roles.decorator";
-import { Role } from "../shared/enums/role.enum";
+import { RoleEnum } from "../shared/enums/role.enum";
 
 @Controller("auth")
 export class AuthController {
@@ -39,7 +39,7 @@ export class AuthController {
   ) {}
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(RoleEnum.ADMIN)
   @Post("sign-up")
   public signUp(@Body() dto: SignUpDto) {
     return this.authService.signUp(dto);

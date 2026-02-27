@@ -8,7 +8,7 @@ import { UpdateUserDto } from "./dto/update-user.dto";
 import { User } from "./entities/user.entity";
 import { UsersService } from "./users.service";
 import { Roles } from "../auth/decorators/roles.decorator";
-import { Role } from "../shared/enums/role.enum";
+import { RoleEnum } from "../shared/enums/role.enum";
 import { RolesGuard } from "../auth/guards/roles.guard";
 
 @Controller("users")
@@ -16,7 +16,7 @@ export class UsersController {
   public constructor(private readonly userService: UsersService) {}
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(RoleEnum.ADMIN)
   @Get()
   public findAllUsers() {
     return this.userService.findAllUsers();
@@ -29,7 +29,7 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(RoleEnum.ADMIN)
   @Patch("update")
   public update(@GetUser() user: User, @Body() dto: UpdateUserDto) {
     return this.userService.update(user, dto);

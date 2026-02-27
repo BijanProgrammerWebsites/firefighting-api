@@ -12,7 +12,7 @@ import { ResponseDto } from "../shared/dto/response.dto";
 import { EquipmentsService } from "../equipments/equipments.service";
 import { Answer } from "../answers/entities/answer.entity";
 import { Question } from "../questions/entities/question.entity";
-import { Status } from "../shared/enums/status.enum";
+import { StatusEnum } from "../shared/enums/status.enum";
 
 @Injectable()
 export class InspectionsService {
@@ -27,11 +27,11 @@ export class InspectionsService {
   ) {}
 
   private calculateInspectionStatusAndScore(answers: Answer[]): {
-    status: Status;
+    status: StatusEnum;
     score: number;
   } {
     if (!answers.length) {
-      return { status: Status.OK, score: 0 };
+      return { status: StatusEnum.OK, score: 0 };
     }
 
     let hasError = false;
@@ -39,21 +39,21 @@ export class InspectionsService {
     let rawScore = 0;
 
     for (const answer of answers) {
-      if (answer.status === Status.ERROR) {
+      if (answer.status === StatusEnum.ERROR) {
         hasError = true;
-      } else if (answer.status === Status.WARNING) {
+      } else if (answer.status === StatusEnum.WARNING) {
         hasWarning = true;
         rawScore += 0.5;
-      } else if (answer.status === Status.OK) {
+      } else if (answer.status === StatusEnum.OK) {
         rawScore += 1;
       }
     }
 
     const status = hasError
-      ? Status.ERROR
+      ? StatusEnum.ERROR
       : hasWarning
-        ? Status.WARNING
-        : Status.OK;
+        ? StatusEnum.WARNING
+        : StatusEnum.OK;
 
     const maxScore = answers.length;
     const normalizedScore = maxScore > 0 ? (rawScore / maxScore) * 100 : 0;

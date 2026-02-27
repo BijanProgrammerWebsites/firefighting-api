@@ -3,10 +3,10 @@ import { AnswersService } from "./answers.service";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../auth/guards/roles.guard";
 import { Roles } from "../auth/decorators/roles.decorator";
-import { Role } from "../shared/enums/role.enum";
+import { RoleEnum } from "../shared/enums/role.enum";
 
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(Role.ADMIN)
+@Roles(RoleEnum.ADMIN)
 @Controller("answers")
 export class AnswersController {
   constructor(private readonly answersService: AnswersService) {}

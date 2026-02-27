@@ -1,6 +1,6 @@
 import { IsEnum, IsNotEmpty, IsString } from "class-validator";
 import { Trim } from "../../shared/decorators/trim.decorator";
-import { Role } from "../../shared/enums/role.enum";
+import { RoleEnum } from "../../shared/enums/role.enum";
 
 export class SignUpDto {
   @IsString()
@@ -13,6 +13,6 @@ export class SignUpDto {
   @IsNotEmpty()
   password: string;
 
-  @IsEnum(Role)
-  role: Role;
+  @IsEnum(RoleEnum)
+  role: RoleEnum;
 }
