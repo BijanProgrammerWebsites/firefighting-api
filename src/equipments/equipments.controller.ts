@@ -18,11 +18,11 @@ import { Roles } from "../auth/decorators/roles.decorator";
 import { Role } from "../shared/enums/role.enum";
 
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(Role.ADMIN)
 @Controller("equipments")
 export class EquipmentsController {
   constructor(private readonly equipmentsService: EquipmentsService) {}
 
+  @Roles(Role.ADMIN)
   @Post()
   public create(@Body() dto: CreateEquipmentDto) {
     return this.equipmentsService.create(dto);
@@ -43,16 +43,19 @@ export class EquipmentsController {
     return this.equipmentsService.findOne(id);
   }
 
+  @Roles(Role.ADMIN)
   @Patch(":id")
   public update(@Param("id") id: string, @Body() dto: UpdateEquipmentDto) {
     return this.equipmentsService.update(id, dto);
   }
 
+  @Roles(Role.ADMIN)
   @Delete(":id")
   public remove(@Param("id") id: string) {
     return this.equipmentsService.remove(id);
   }
 
+  @Roles(Role.ADMIN)
   @Post(":id/move")
   public move(@Param("id") id: string, @Body() dto: MoveDto) {
     return this.equipmentsService.move(id, dto);
