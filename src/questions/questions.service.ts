@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Question } from "./entities/question.entity";
@@ -14,12 +10,6 @@ export class QuestionsService {
     @InjectRepository(Question)
     private readonly questionRepo: Repository<Question>,
   ) {}
-
-  public async create(): Promise<never> {
-    throw new BadRequestException(
-      "Questions can only be managed through standards.",
-    );
-  }
 
   public async findAll(): Promise<ResponseDto<Question[]>> {
     const questions = await this.questionRepo.find({ relations: ["standard"] });
@@ -50,17 +40,5 @@ export class QuestionsService {
       message: "سؤال با موفقیت دریافت شد.",
       result: question,
     };
-  }
-
-  public async update(): Promise<never> {
-    throw new BadRequestException(
-      "Questions can only be managed through standards.",
-    );
-  }
-
-  public async remove(): Promise<never> {
-    throw new BadRequestException(
-      "Questions can only be managed through standards.",
-    );
   }
 }
