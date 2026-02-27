@@ -223,8 +223,30 @@ export class EquipmentsService {
     dto: UpdateEquipmentDto,
   ): Promise<ResponseDto> {
     const equipment = await this.getEquipmentOrFail(id);
-
     const updatedEquipment = assignDefinedValues(equipment, dto);
+
+    if (dto.templateId) {
+      const templateResponse = await this.templatesService.findOne(
+        dto.templateId,
+      );
+
+      if ("error" in templateResponse) {
+        throw new InternalServerErrorException(templateResponse.error);
+      }
+
+      updatedEquipment.template = templateResponse.result;
+    }
+
+    if (dto.unitId) {
+      const unitResponse = await this.unitsService.findOne(dto.unitId);
+
+      if ("error" in unitResponse) {
+        throw new InternalServerErrorException(unitResponse.error);
+      }
+
+      updatedEquipment.unit = unitResponse.result;
+    }
+
     await this.equipmentRepo.save(updatedEquipment);
 
     return { message: "تجهیز با موفقیت به‌روزرسانی شد." };
