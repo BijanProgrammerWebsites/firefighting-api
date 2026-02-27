@@ -42,7 +42,9 @@ export class UsersService {
 
   public async update(user: User, dto: UpdateUserDto): Promise<ResponseDto> {
     if (!(user.role === Role.ADMIN || user.id === dto.id)) {
-      throw new UnauthorizedException("You cannot update this user.");
+      throw new UnauthorizedException(
+        "شما مجاز به به‌روزرسانی این کاربر نیستید.",
+      );
     }
 
     if (dto.password) {

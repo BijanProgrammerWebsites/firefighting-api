@@ -53,7 +53,7 @@ export class StandardsService {
     });
 
     if (!standard) {
-      throw new NotFoundException("Standard not found.");
+      throw new NotFoundException("استاندارد پیدا نشد.");
     }
 
     return standard;

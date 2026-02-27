@@ -35,7 +35,7 @@ export class AnswersService {
     });
 
     if (!answer) {
-      throw new NotFoundException("Answer not found.");
+      throw new NotFoundException("پاسخ پیدا نشد.");
     }
 
     return {

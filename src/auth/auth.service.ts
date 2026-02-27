@@ -41,7 +41,7 @@ export class AuthService {
     });
 
     if (foundUser) {
-      throw new ConflictException("Username already taken.");
+      throw new ConflictException("نام کاربری قبلاً استفاده شده است.");
     }
 
     const salt = await bcrypt.genSalt();
@@ -72,12 +72,12 @@ export class AuthService {
     });
 
     if (!foundUser) {
-      throw new UnauthorizedException("Username not found.");
+      throw new UnauthorizedException("نام کاربری پیدا نشد.");
     }
 
     const isPasswordValid = await bcrypt.compare(password, foundUser.password);
     if (!isPasswordValid) {
-      throw new UnauthorizedException("Password is wrong.");
+      throw new UnauthorizedException("رمز عبور اشتباه است.");
     }
 
     await this.generateTokensAndSetCookies(foundUser, res);
@@ -117,7 +117,7 @@ export class AuthService {
     });
 
     if (!foundUser || !foundUser.refreshToken) {
-      throw new UnauthorizedException("Refresh token is invalid.");
+      throw new UnauthorizedException("رفرش توکن نامعتبر است.");
     }
 
     const isRefreshTokenValid = await bcrypt.compare(
@@ -126,7 +126,7 @@ export class AuthService {
     );
 
     if (!isRefreshTokenValid) {
-      throw new UnauthorizedException("Refresh token is invalid.");
+      throw new UnauthorizedException("رفرش توکن نامعتبر است.");
     }
 
     const accessToken = this.generateAccessToken(foundUser);

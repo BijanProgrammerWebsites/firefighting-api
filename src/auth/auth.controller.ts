@@ -76,7 +76,7 @@ export class AuthController {
     const refreshToken: string | undefined = req.cookies.refreshToken;
 
     if (!refreshToken) {
-      throw new UnauthorizedException("Refresh token not found.");
+      throw new UnauthorizedException("رفرش توکن پیدا نشد.");
     }
 
     try {
@@ -87,13 +87,15 @@ export class AuthController {
       const userId = payload.sub;
 
       if (!userId) {
-        throw new UnauthorizedException("Invalid refresh token.");
+        throw new UnauthorizedException("رفرش توکن نامعتبر است.");
       }
 
       return this.authService.refresh(userId, refreshToken, res);
     } catch {
       this.authService.clearCookies(res);
-      throw new UnauthorizedException("Invalid or expired refresh token.");
+      throw new UnauthorizedException(
+        "رفرش توکن نامعتبر است یا منقضی شده است.",
+      );
     }
   }
 }

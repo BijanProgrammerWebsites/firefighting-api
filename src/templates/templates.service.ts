@@ -23,7 +23,7 @@ export class TemplatesService {
     });
 
     if (!standard) {
-      throw new NotFoundException("Standard not found.");
+      throw new NotFoundException("استاندارد پیدا نشد.");
     }
 
     const createdTemplate = await this.templateRepo.save({
@@ -55,7 +55,7 @@ export class TemplatesService {
     const template = await this.templateRepo.findOne({ where: { id } });
 
     if (!template) {
-      throw new NotFoundException("Template not found.");
+      throw new NotFoundException("قالب پیدا نشد.");
     }
 
     return template;
@@ -83,7 +83,7 @@ export class TemplatesService {
       });
 
       if (!standard) {
-        throw new NotFoundException("Standard not found.");
+        throw new NotFoundException("استاندارد پیدا نشد.");
       }
 
       updatedTemplate.standard = standard;

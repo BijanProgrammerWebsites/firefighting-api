@@ -174,7 +174,7 @@ export class EquipmentsService {
     const equipment = await this.equipmentRepo.findOne({ where: { id } });
 
     if (!equipment) {
-      throw new NotFoundException("Equipment not found.");
+      throw new NotFoundException("تجهیز پیدا نشد.");
     }
 
     return equipment;
@@ -215,7 +215,7 @@ export class EquipmentsService {
     });
 
     if (!over) {
-      throw new NotFoundException("Over not found.");
+      throw new NotFoundException("مورد مقصد پیدا نشد.");
     }
 
     const equipments = await moveEntities(this.equipmentRepo, active, over);
