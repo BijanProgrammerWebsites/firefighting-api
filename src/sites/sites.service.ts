@@ -50,7 +50,10 @@ export class SitesService {
   }
 
   private async getSiteOrFail(id: string): Promise<Site> {
-    const site = await this.siteRepo.findOne({ where: { id } });
+    const site = await this.siteRepo.findOne({
+      where: { id },
+      relations: ["zones"],
+    });
 
     if (!site) {
       throw new NotFoundException("سایت پیدا نشد.");
