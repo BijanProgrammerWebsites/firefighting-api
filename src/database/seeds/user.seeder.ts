@@ -13,6 +13,8 @@ export class UserSeeder implements Seeder {
 
     await repo.save([
       { username: "admin", password: hashedPassword, role: Role.ADMIN },
+      { username: "inspector", password: hashedPassword, role: Role.INSPECTOR },
+      { username: "viewer", password: hashedPassword, role: Role.VIEWER },
     ]);
   }
 }
