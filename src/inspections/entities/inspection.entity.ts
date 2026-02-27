@@ -1,4 +1,5 @@
 import {
+  Column,
   CreateDateColumn,
   Entity,
   ManyToOne,
@@ -8,6 +9,7 @@ import {
 } from "typeorm";
 import { Equipment } from "../../equipments/entities/equipment.entity";
 import { Answer } from "../../answers/entities/answer.entity";
+import { Status } from "../../shared/enums/status.enum";
 
 @Entity()
 export class Inspection {
@@ -19,6 +21,12 @@ export class Inspection {
 
   @UpdateDateColumn()
   updatedDate: Date;
+
+  @Column({ type: "enum", enum: Status })
+  status: Status;
+
+  @Column({ type: "float" })
+  score: number;
 
   @ManyToOne(() => Equipment, (equipment) => equipment.inspections)
   equipment: Equipment;

@@ -12,6 +12,7 @@ import { ResponseDto } from "../shared/dto/response.dto";
 import { EquipmentsService } from "../equipments/equipments.service";
 import { Answer } from "../answers/entities/answer.entity";
 import { Question } from "../questions/entities/question.entity";
+import { Status } from "../shared/enums/status.enum";
 
 @Injectable()
 export class InspectionsService {
@@ -25,6 +26,41 @@ export class InspectionsService {
     private readonly equipmentsService: EquipmentsService,
   ) {}
 
+  private calculateInspectionStatusAndScore(answers: Answer[]): {
+    status: Status;
+    score: number;
+  } {
+    if (!answers.length) {
+      return { status: Status.OK, score: 0 };
+    }
+
+    let hasError = false;
+    let hasWarning = false;
+    let rawScore = 0;
+
+    for (const answer of answers) {
+      if (answer.status === Status.ERROR) {
+        hasError = true;
+      } else if (answer.status === Status.WARNING) {
+        hasWarning = true;
+        rawScore += 0.5;
+      } else if (answer.status === Status.OK) {
+        rawScore += 1;
+      }
+    }
+
+    const status = hasError
+      ? Status.ERROR
+      : hasWarning
+        ? Status.WARNING
+        : Status.OK;
+
+    const maxScore = answers.length;
+    const normalizedScore = maxScore > 0 ? (rawScore / maxScore) * 100 : 0;
+
+    return { status, score: normalizedScore };
+  }
+
   public async create(dto: CreateInspectionDto): Promise<ResponseDto<string>> {
     const equipmentResponse = await this.equipmentsService.findOne(
       dto.equipmentId,
@@ -36,13 +72,13 @@ export class InspectionsService {
 
     const { result: equipment } = equipmentResponse;
 
-    const inspection = await this.inspectionRepo.save({
+    let inspection = this.inspectionRepo.create({
       equipment,
     });
 
-    if (dto.answers?.length) {
-      const answers: Answer[] = [];
+    const answers: Answer[] = [];
 
+    if (dto.answers?.length) {
       for (const answerDto of dto.answers) {
         const question = await this.questionRepo.findOne({
           where: { id: answerDto.questionId },
@@ -62,7 +98,15 @@ export class InspectionsService {
 
         answers.push(answer);
       }
+    }
 
+    const { status, score } = this.calculateInspectionStatusAndScore(answers);
+    inspection.status = status;
+    inspection.score = score;
+
+    inspection = await this.inspectionRepo.save(inspection);
+
+    if (answers.length) {
       await this.answerRepo.save(answers);
     }
 
@@ -141,9 +185,9 @@ export class InspectionsService {
         await this.answerRepo.remove(existingAnswers);
       }
 
-      if (dto.answers.length) {
-        const answers: Answer[] = [];
+      const answers: Answer[] = [];
 
+      if (dto.answers.length) {
         for (const answerDto of dto.answers) {
           const question = await this.questionRepo.findOne({
             where: { id: answerDto.questionId },
@@ -163,9 +207,13 @@ export class InspectionsService {
 
           answers.push(answer);
         }
-
-        await this.answerRepo.save(answers);
       }
+
+      const { status, score } = this.calculateInspectionStatusAndScore(answers);
+      inspection.status = status;
+      inspection.score = score;
+
+      await this.answerRepo.save(answers);
     }
 
     await this.inspectionRepo.save(inspection);

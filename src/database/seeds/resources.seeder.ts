@@ -194,7 +194,8 @@ export class ResourcesSeeder implements Seeder {
     for (const equipment of equipments) {
       const createdDate = inspectionCreatedDatesByTitle[equipment.title] ?? now;
 
-      const inspection = await inspectionRepo.save({
+      // Prepare inspection; status/score will be computed from answers below
+      const inspection = inspectionRepo.create({
         equipment,
         createdDate,
       });
@@ -231,6 +232,34 @@ export class ResourcesSeeder implements Seeder {
           question,
         };
       });
+
+      // Compute inspection status and normalized score (0–100) based on seeded answers
+      let hasError = false;
+      let hasWarning = false;
+      let rawScore = 0;
+
+      for (const answer of answersPayload) {
+        if (answer.status === Status.ERROR) {
+          hasError = true;
+        } else if (answer.status === Status.WARNING) {
+          hasWarning = true;
+          rawScore += 0.5;
+        } else if (answer.status === Status.OK) {
+          rawScore += 1;
+        }
+      }
+
+      const inspectionStatus = hasError
+        ? Status.ERROR
+        : hasWarning
+          ? Status.WARNING
+          : Status.OK;
+
+      inspection.status = inspectionStatus;
+      const maxScore = answersPayload.length;
+      inspection.score = maxScore > 0 ? (rawScore / maxScore) * 100 : 0;
+
+      await inspectionRepo.save(inspection);
 
       if (answersPayload.length) {
         await answerRepo.save(answersPayload);
