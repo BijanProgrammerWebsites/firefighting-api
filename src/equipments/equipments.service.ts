@@ -76,33 +76,10 @@ export class EquipmentsService {
         "last_inspection",
         'last_inspection."equipmentId" = equipment.id',
       )
-      .addSelect(
-        `
-        CASE
-          WHEN last_inspection."lastInspectionAt" IS NULL THEN 'overdue'
-          ELSE
-            CASE
-              WHEN (last_inspection."lastInspectionAt" + (template."inspectionPeriod" || ' days')::interval) < now()
-                THEN 'overdue'
-              WHEN date_trunc('day', last_inspection."lastInspectionAt" + (template."inspectionPeriod" || ' days')::interval)
-                   = date_trunc('day', now())
-                THEN 'today'
-              WHEN (last_inspection."lastInspectionAt" + (template."inspectionPeriod" || ' days')::interval)
-                   > now()
-               AND (last_inspection."lastInspectionAt" + (template."inspectionPeriod" || ' days')::interval)
-                   <= now() + interval '7 days'
-                THEN 'thisWeek'
-              WHEN (last_inspection."lastInspectionAt" + (template."inspectionPeriod" || ' days')::interval)
-                   > now() + interval '7 days'
-               AND (last_inspection."lastInspectionAt" + (template."inspectionPeriod" || ' days')::interval)
-                   <= now() + interval '14 days'
-                THEN 'nextWeek'
-              ELSE 'later'
-            END
-        END
-      `,
-        "bucket",
-      );
+      // expose last inspection date explicitly in raw results
+      .addSelect('last_inspection."lastInspectionAt"', "lastInspectionAt")
+      // expose inspection period explicitly in raw results
+      .addSelect('template."inspectionPeriod"', "inspectionPeriod");
 
     const { raw, entities } = await qb.getRawAndEntities();
 
@@ -114,23 +91,55 @@ export class EquipmentsService {
       later: [],
     };
 
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+
+    const msInDay = 24 * 60 * 60 * 1000;
+
     raw.forEach((row, index) => {
-      const bucket = (row as { bucket: string }).bucket;
-      if (!buckets[bucket]) {
-        buckets[bucket] = [];
+      const lastInspectionRaw =
+        (row as { lastInspectionAt?: Date }).lastInspectionAt ??
+        (row as any)["last_inspection_lastInspectionAt"];
+      const inspectionPeriodRaw =
+        (row as { inspectionPeriod?: number }).inspectionPeriod ??
+        (row as any)["template_inspectionPeriod"];
+
+      let bucket: keyof BucketsDto = "overdue";
+
+      if (lastInspectionRaw && inspectionPeriodRaw != null) {
+        const lastInspectionAt = new Date(lastInspectionRaw as any);
+        const inspectionPeriod = Number(inspectionPeriodRaw);
+
+        const nextInspectionAt = new Date(
+          lastInspectionAt.getTime() + inspectionPeriod * msInDay,
+        );
+
+        const startOfNextInspection = new Date(nextInspectionAt);
+        startOfNextInspection.setHours(0, 0, 0, 0);
+
+        const diffDays = Math.floor(
+          (startOfNextInspection.getTime() - startOfToday.getTime()) / msInDay,
+        );
+
+        if (diffDays < 0) {
+          bucket = "overdue";
+        } else if (diffDays === 0) {
+          bucket = "today";
+        } else if (diffDays > 0 && diffDays <= 7) {
+          bucket = "thisWeek";
+        } else if (diffDays > 7 && diffDays <= 14) {
+          bucket = "nextWeek";
+        } else {
+          bucket = "later";
+        }
       }
+
       buckets[bucket].push(entities[index]);
     });
 
     return {
       message: "داشبورد با موفقیت دریافت شد.",
-      result: {
-        overdue: buckets.overdue,
-        today: buckets.today,
-        thisWeek: buckets.thisWeek,
-        nextWeek: buckets.nextWeek,
-        later: buckets.later,
-      },
+      result: buckets,
     };
   }
 
