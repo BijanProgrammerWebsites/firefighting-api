@@ -4,6 +4,8 @@ import {
   ValidationPipe,
 } from "@nestjs/common";
 import { NestFactory, Reflector } from "@nestjs/core";
+import { NestExpressApplication } from "@nestjs/platform-express";
+import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 
 import cookieParser from "cookie-parser";
 
@@ -12,7 +14,6 @@ import "reflect-metadata";
 import { AppModule } from "./app.module";
 
 import { ValidationExceptionFilter } from "./validation.filter";
-import { NestExpressApplication } from "@nestjs/platform-express";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -38,6 +39,15 @@ async function bootstrap() {
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   app.useGlobalFilters(new ValidationExceptionFilter());
+
+  const config = new DocumentBuilder()
+    .setTitle("Firefighting API")
+    .setVersion("1.0")
+    .build();
+  const documentFactory = () => SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup("api", app, documentFactory, {
+    customSiteTitle: "Firefighting API",
+  });
 
   await app.listen(process.env.PORT ?? 5000);
 }
