@@ -1,10 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from "@nestjs/common";
-import { CreateAnswerDto } from "./dto/create-answer.dto";
-import { UpdateAnswerDto } from "./dto/update-answer.dto";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Answer } from "./entities/answer.entity";
 import { Repository } from "typeorm";
@@ -22,12 +16,6 @@ export class AnswersService {
     @InjectRepository(Inspection)
     private readonly inspectionRepo: Repository<Inspection>,
   ) {}
-
-  public async create(_: CreateAnswerDto): Promise<never> {
-    throw new BadRequestException(
-      "Answers can only be managed through inspections.",
-    );
-  }
 
   public async findAll(): Promise<ResponseDto<Answer[]>> {
     const answers = await this.answerRepo.find({
@@ -54,17 +42,5 @@ export class AnswersService {
       message: "پاسخ با موفقیت دریافت شد.",
       result: answer,
     };
-  }
-
-  public async update(_: string, __: UpdateAnswerDto): Promise<never> {
-    throw new BadRequestException(
-      "Answers can only be managed through inspections.",
-    );
-  }
-
-  public async remove(_: string): Promise<never> {
-    throw new BadRequestException(
-      "Answers can only be managed through inspections.",
-    );
   }
 }
