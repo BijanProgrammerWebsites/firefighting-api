@@ -29,6 +29,7 @@ export class TemplatesService {
     const createdTemplate = await this.templateRepo.save({
       title: dto.title,
       description: dto.description,
+      inspectionPeriod: dto.inspectionPeriod,
       standard,
     });
 

@@ -19,6 +19,9 @@ export class Template {
   @Column("text")
   description: string;
 
+  @Column({ type: "int", default: 30 })
+  inspectionPeriod: number;
+
   @ManyToOne(() => Standard)
   standard: Standard;
 

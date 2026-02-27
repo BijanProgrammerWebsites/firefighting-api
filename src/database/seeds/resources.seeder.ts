@@ -84,16 +84,19 @@ export class ResourcesSeeder implements Seeder {
       {
         title: "بازرسی ماهانه کپسول آتش‌نشانی",
         description: "چک‌لیست استاندارد برای کپسول‌های قابل‌حمل آتش‌نشانی.",
+        inspectionPeriod: 30,
         standard: extinguishersStd,
       },
       {
         title: "بازرسی فصلی هیدرانت",
         description: "چک‌لیست برای هیدرانت‌ها و قرقره‌های شیلنگ.",
+        inspectionPeriod: 90,
         standard: hydrantsStd,
       },
       {
         title: "بازدید خروجی‌های اضطراری",
         description: "چک‌لیست برای خروجی‌ها، روشنایی و علائم ایمنی.",
+        inspectionPeriod: 30,
         standard: exitsStd,
       },
     ]);

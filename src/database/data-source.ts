@@ -12,6 +12,7 @@ const options: DataSourceOptions & SeederOptions = {
   entities: ["src/**/*.entity{.ts,.js}"],
   seeds: ["src/database/seeds/**/*{.ts,.js}"],
   factories: ["src/database/factories/**/*{.ts,.js}"],
+  synchronize: true,
 };
 
 export const AppDataSource = new DataSource(options);

@@ -33,6 +33,11 @@ export class EquipmentsController {
     return this.equipmentsService.findAll();
   }
 
+  @Get("buckets")
+  public buckets() {
+    return this.equipmentsService.buckets();
+  }
+
   @Get(":id")
   public findOne(@Param("id") id: string) {
     return this.equipmentsService.findOne(id);

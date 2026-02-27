@@ -13,6 +13,8 @@ import { getMaxPosition, moveEntities } from "../shared/utils/position.utils";
 import { ResponseDto } from "../shared/dto/response.dto";
 import { assignDefinedValues } from "../shared/utils/object.utils";
 import { UnitsService } from "../units/units.service";
+import { Inspection } from "../inspections/entities/inspection.entity";
+import { BucketsDto } from "./dto/buckets.dto";
 
 @Injectable()
 export class EquipmentsService {
@@ -57,6 +59,78 @@ export class EquipmentsService {
     return {
       message: "تجهیزات با موفقیت دریافت شدند.",
       result: equipments,
+    };
+  }
+
+  public async buckets(): Promise<ResponseDto<BucketsDto>> {
+    const qb = this.equipmentRepo
+      .createQueryBuilder("equipment")
+      .leftJoinAndSelect("equipment.template", "template")
+      .leftJoin(
+        (subQ) =>
+          subQ
+            .from(Inspection, "inspection")
+            .select('inspection."equipmentId"', "equipmentId")
+            .addSelect('MAX(inspection."createdDate")', "lastInspectionAt")
+            .groupBy('inspection."equipmentId"'),
+        "last_inspection",
+        'last_inspection."equipmentId" = equipment.id',
+      )
+      .addSelect(
+        `
+        CASE
+          WHEN last_inspection."lastInspectionAt" IS NULL THEN 'overdue'
+          ELSE
+            CASE
+              WHEN (last_inspection."lastInspectionAt" + (template."inspectionPeriod" || ' days')::interval) < now()
+                THEN 'overdue'
+              WHEN date_trunc('day', last_inspection."lastInspectionAt" + (template."inspectionPeriod" || ' days')::interval)
+                   = date_trunc('day', now())
+                THEN 'today'
+              WHEN (last_inspection."lastInspectionAt" + (template."inspectionPeriod" || ' days')::interval)
+                   > now()
+               AND (last_inspection."lastInspectionAt" + (template."inspectionPeriod" || ' days')::interval)
+                   <= now() + interval '7 days'
+                THEN 'thisWeek'
+              WHEN (last_inspection."lastInspectionAt" + (template."inspectionPeriod" || ' days')::interval)
+                   > now() + interval '7 days'
+               AND (last_inspection."lastInspectionAt" + (template."inspectionPeriod" || ' days')::interval)
+                   <= now() + interval '14 days'
+                THEN 'nextWeek'
+              ELSE 'later'
+            END
+        END
+      `,
+        "bucket",
+      );
+
+    const { raw, entities } = await qb.getRawAndEntities();
+
+    const buckets: BucketsDto = {
+      overdue: [],
+      today: [],
+      thisWeek: [],
+      nextWeek: [],
+      later: [],
+    };
+
+    raw.forEach((row, index) => {
+      const bucket = (row as { bucket: string }).bucket;
+      if (!buckets[bucket]) {
+        buckets[bucket] = [];
+      }
+      buckets[bucket].push(entities[index]);
+    });
+
+    return {
+      message: "داشبورد با موفقیت دریافت شد.",
+      result: {
+        overdue: buckets.overdue,
+        today: buckets.today,
+        thisWeek: buckets.thisWeek,
+        nextWeek: buckets.nextWeek,
+        later: buckets.later,
+      },
     };
   }
 
