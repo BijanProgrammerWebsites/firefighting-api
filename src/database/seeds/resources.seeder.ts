@@ -104,10 +104,7 @@ export class ResourcesSeeder implements Seeder {
     const [extinguisherTpl, hydrantTpl, exitsTpl] = templates;
 
     // --- Refinery hierarchy: refinery -> sites -> zones -> units ---
-    const refinery = await refineryRepo.save({
-      title: "پالایشگاه اصلی",
-      picture: null,
-    });
+    const [refinery] = await refineryRepo.find();
 
     const sites = await siteRepo.save([
       { position: 1, title: "سایت شمالی", refinery },
