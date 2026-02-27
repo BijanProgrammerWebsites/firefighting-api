@@ -72,11 +72,10 @@ export class InspectionsService {
 
     const { result: equipment } = equipmentResponse;
 
-    let inspection = this.inspectionRepo.create({
+    const inspection = this.inspectionRepo.create({
       equipment,
+      answers: [],
     });
-
-    const answers: Answer[] = [];
 
     if (dto.answers?.length) {
       for (const answerDto of dto.answers) {
@@ -92,27 +91,24 @@ export class InspectionsService {
           status: answerDto.status,
           text: answerDto.text,
           picture: answerDto.picture ?? null,
-          inspection,
           question,
         });
 
-        answers.push(answer);
+        inspection.answers.push(answer);
       }
     }
 
-    const { status, score } = this.calculateInspectionStatusAndScore(answers);
+    const { status, score } = this.calculateInspectionStatusAndScore(
+      inspection.answers,
+    );
     inspection.status = status;
     inspection.score = score;
 
-    inspection = await this.inspectionRepo.save(inspection);
-
-    if (answers.length) {
-      await this.answerRepo.save(answers);
-    }
+    const createdInspection = await this.inspectionRepo.save(inspection);
 
     return {
       message: "بازرسی با موفقیت ایجاد شد.",
-      result: inspection.id,
+      result: createdInspection.id,
     };
   }
 
