@@ -14,7 +14,7 @@ import { ResponseDto } from "../shared/dto/response.dto";
 import { assignDefinedValues } from "../shared/utils/object.utils";
 import { UnitsService } from "../units/units.service";
 import { Inspection } from "../inspections/entities/inspection.entity";
-import { BucketItemDto, BucketsDto } from "./dto/buckets.dto";
+import { BucketsDto } from "./dto/buckets.dto";
 
 @Injectable()
 export class EquipmentsService {
@@ -74,10 +74,11 @@ export class EquipmentsService {
       return {
         message: "داشبورد با موفقیت دریافت شد.",
         result: {
+          withoutHistory: [],
+          overdue: [],
           today: [],
           next7Days: [],
           next30Days: [],
-          overdue: [],
         },
       };
     }
@@ -109,10 +110,11 @@ export class EquipmentsService {
     }
 
     const buckets: BucketsDto = {
+      withoutHistory: [],
+      overdue: [],
       today: [],
       next7Days: [],
       next30Days: [],
-      overdue: [],
     };
 
     const startOfToday = new Date();
@@ -123,45 +125,47 @@ export class EquipmentsService {
     for (const equipment of equipments) {
       const lastInspection = lastInspectionMap.get(equipment.id) ?? null;
 
-      let bucketKey: keyof BucketsDto = "overdue";
-
       if (!lastInspection) {
-        bucketKey = "overdue";
-      } else {
-        const lastInspectionAt = lastInspection.createdDate;
-        const inspectionPeriod = equipment.template.inspectionPeriod;
+        buckets.withoutHistory.push({
+          equipment,
+          lastInspection: null,
+          nextInspectionAt: null,
+        });
 
-        const nextInspectionAt = new Date(
-          lastInspectionAt.getTime() + inspectionPeriod * msInDay,
-        );
-
-        const startOfNextInspection = new Date(nextInspectionAt);
-        startOfNextInspection.setHours(0, 0, 0, 0);
-
-        const diffDays = Math.floor(
-          (startOfNextInspection.getTime() - startOfToday.getTime()) / msInDay,
-        );
-
-        if (diffDays < 0) {
-          bucketKey = "overdue";
-        } else if (diffDays === 0) {
-          bucketKey = "today";
-        } else if (diffDays > 0 && diffDays <= 7) {
-          bucketKey = "next7Days";
-        } else if (diffDays > 7 && diffDays <= 30) {
-          bucketKey = "next30Days";
-        } else {
-          // ignore items beyond 30 days
-          continue;
-        }
+        continue;
       }
 
-      const item: BucketItemDto = {
+      let bucketKey: keyof BucketsDto = "overdue";
+
+      const lastInspectionAt = lastInspection.createdDate;
+      const inspectionPeriod = equipment.template.inspectionPeriod;
+
+      const nextInspectionAt = new Date(
+        lastInspectionAt.getTime() + inspectionPeriod * msInDay,
+      );
+
+      const startOfNextInspection = new Date(nextInspectionAt);
+      startOfNextInspection.setHours(0, 0, 0, 0);
+
+      const diffDays = Math.floor(
+        (startOfNextInspection.getTime() - startOfToday.getTime()) / msInDay,
+      );
+
+      if (diffDays < 0) {
+        bucketKey = "overdue";
+      } else if (diffDays === 0) {
+        bucketKey = "today";
+      } else if (diffDays > 0 && diffDays <= 7) {
+        bucketKey = "next7Days";
+      } else if (diffDays > 7 && diffDays <= 30) {
+        bucketKey = "next30Days";
+      }
+
+      buckets[bucketKey].push({
         equipment,
         lastInspection,
-      };
-
-      buckets[bucketKey].push(item);
+        nextInspectionAt,
+      });
     }
 
     return {
