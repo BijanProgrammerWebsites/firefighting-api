@@ -159,6 +159,8 @@ export class EquipmentsService {
         bucketKey = "next7Days";
       } else if (diffDays > 7 && diffDays <= 30) {
         bucketKey = "next30Days";
+      } else {
+        continue;
       }
 
       buckets[bucketKey].push({
