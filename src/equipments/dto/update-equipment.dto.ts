@@ -1,4 +1,4 @@
-import { OmitType, PartialType } from "@nestjs/mapped-types";
+import { OmitType, PartialType } from "@nestjs/swagger";
 import { CreateEquipmentDto } from "./create-equipment.dto";
 
 export class UpdateEquipmentDto extends PartialType(
