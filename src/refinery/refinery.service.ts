@@ -13,7 +13,9 @@ export class RefineryService {
   ) {}
 
   public async findTheOnlyOne(): Promise<ResponseDto<Refinery>> {
-    const [refinery] = await this.refineryRepo.find();
+    const [refinery] = await this.refineryRepo.find({
+      relations: ["sites"],
+    });
 
     return {
       message: "پالایشگاه با موفقیت دریافت شد.",

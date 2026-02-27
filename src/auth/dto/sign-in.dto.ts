@@ -6,7 +6,7 @@ export class SignInDto {
   @IsNotEmpty()
   username: string;
 
-  /** @example "admin" */
+  /** @example "1234" */
   @IsString()
   @IsNotEmpty()
   password: string;

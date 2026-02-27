@@ -55,7 +55,10 @@ export class UnitsService {
   }
 
   private async getUnitOrFail(id: string): Promise<Unit> {
-    const unit = await this.unitRepo.findOne({ where: { id } });
+    const unit = await this.unitRepo.findOne({
+      where: { id },
+      relations: ["equipments"],
+    });
 
     if (!unit) {
       throw new NotFoundException("یونیت پیدا نشد.");

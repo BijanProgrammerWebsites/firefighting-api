@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 import { Exclude } from "class-transformer";
-import { Role } from "../../shared/enums/role.enum";
+import { RoleEnum } from "../../shared/enums/role.enum";
 
 @Entity()
 export class User {
@@ -15,8 +15,8 @@ export class User {
   @Exclude()
   password: string;
 
-  @Column({ type: "enum", enum: Role })
-  role: Role;
+  @Column({ type: "enum", enum: RoleEnum })
+  role: RoleEnum;
 
   @Column("text", { nullable: true, default: null })
   @Exclude()

@@ -8,15 +8,15 @@ import {
   ValidateNested,
 } from "class-validator";
 import { Type } from "class-transformer";
-import { Status } from "../../shared/enums/status.enum";
+import { StatusEnum } from "../../shared/enums/status.enum";
 import { Trim } from "../../shared/decorators/trim.decorator";
 
 export class CreateInspectionAnswerDto {
   @IsUUID()
   questionId: string;
 
-  @IsEnum(Status)
-  status: Status;
+  @IsEnum(StatusEnum)
+  status: StatusEnum;
 
   @IsString()
   @Trim()

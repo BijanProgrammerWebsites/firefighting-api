@@ -55,7 +55,10 @@ export class ZonesService {
   }
 
   private async getZoneOrFail(id: string): Promise<Zone> {
-    const zone = await this.zoneRepo.findOne({ where: { id } });
+    const zone = await this.zoneRepo.findOne({
+      where: { id },
+      relations: ["units"],
+    });
 
     if (!zone) {
       throw new NotFoundException("زون پیدا نشد.");

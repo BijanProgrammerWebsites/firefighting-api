@@ -11,7 +11,7 @@ import { Standard } from "../../standards/entities/standard.entity";
 import { Template } from "../../templates/entities/template.entity";
 import { Unit } from "../../units/entities/unit.entity";
 import { Zone } from "../../zones/entities/zone.entity";
-import { Status } from "../../shared/enums/status.enum";
+import { StatusEnum } from "../../shared/enums/status.enum";
 
 export class ResourcesSeeder implements Seeder {
   async run(dataSource: DataSource) {
@@ -194,7 +194,8 @@ export class ResourcesSeeder implements Seeder {
     for (const equipment of equipments) {
       const createdDate = inspectionCreatedDatesByTitle[equipment.title] ?? now;
 
-      const inspection = await inspectionRepo.save({
+      // Prepare inspection; status/score will be computed from answers below
+      const inspection = inspectionRepo.create({
         equipment,
         createdDate,
       });
@@ -216,14 +217,18 @@ export class ResourcesSeeder implements Seeder {
 
       const answersPayload = relatedQuestions.map((question, index) => {
         const status =
-          index === 0 ? Status.OK : index === 1 ? Status.WARNING : Status.ERROR;
+          index === 0
+            ? StatusEnum.OK
+            : index === 1
+              ? StatusEnum.WARNING
+              : StatusEnum.ERROR;
 
         return {
           status,
           text:
-            status === Status.OK
+            status === StatusEnum.OK
               ? "مطابق استاندارد"
-              : status === Status.WARNING
+              : status === StatusEnum.WARNING
                 ? "ایراد جزئی شناسایی شد"
                 : "عدم انطباق؛ نیازمند اقدام اصلاحی است",
           picture: null,
@@ -231,6 +236,34 @@ export class ResourcesSeeder implements Seeder {
           question,
         };
       });
+
+      // Compute inspection status and normalized score (0–100) based on seeded answers
+      let hasError = false;
+      let hasWarning = false;
+      let rawScore = 0;
+
+      for (const answer of answersPayload) {
+        if (answer.status === StatusEnum.ERROR) {
+          hasError = true;
+        } else if (answer.status === StatusEnum.WARNING) {
+          hasWarning = true;
+          rawScore += 0.5;
+        } else if (answer.status === StatusEnum.OK) {
+          rawScore += 1;
+        }
+      }
+
+      const inspectionStatus = hasError
+        ? StatusEnum.ERROR
+        : hasWarning
+          ? StatusEnum.WARNING
+          : StatusEnum.OK;
+
+      inspection.status = inspectionStatus;
+      const maxScore = answersPayload.length;
+      inspection.score = maxScore > 0 ? (rawScore / maxScore) * 100 : 0;
+
+      await inspectionRepo.save(inspection);
 
       if (answersPayload.length) {
         await answerRepo.save(answersPayload);

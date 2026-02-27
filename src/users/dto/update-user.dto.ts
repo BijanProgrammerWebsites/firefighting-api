@@ -6,7 +6,7 @@ import {
   IsUUID,
 } from "class-validator";
 import { Trim } from "../../shared/decorators/trim.decorator";
-import { Role } from "../../shared/enums/role.enum";
+import { RoleEnum } from "../../shared/enums/role.enum";
 
 export class UpdateUserDto {
   @IsUUID()
@@ -25,6 +25,6 @@ export class UpdateUserDto {
   password?: string;
 
   @IsOptional()
-  @IsEnum(Role)
-  role?: Role;
+  @IsEnum(RoleEnum)
+  role?: RoleEnum;
 }

@@ -1,4 +1,5 @@
 import {
+  Column,
   CreateDateColumn,
   Entity,
   ManyToOne,
@@ -8,11 +9,18 @@ import {
 } from "typeorm";
 import { Equipment } from "../../equipments/entities/equipment.entity";
 import { Answer } from "../../answers/entities/answer.entity";
+import { StatusEnum } from "../../shared/enums/status.enum";
 
 @Entity()
 export class Inspection {
   @PrimaryGeneratedColumn("uuid")
   id: string;
+
+  @Column({ type: "enum", enum: StatusEnum })
+  status: StatusEnum;
+
+  @Column({ type: "float" })
+  score: number;
 
   @CreateDateColumn()
   createdDate: Date;

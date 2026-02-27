@@ -12,6 +12,7 @@ import { ResponseDto } from "../shared/dto/response.dto";
 import { EquipmentsService } from "../equipments/equipments.service";
 import { Answer } from "../answers/entities/answer.entity";
 import { Question } from "../questions/entities/question.entity";
+import { StatusEnum } from "../shared/enums/status.enum";
 
 @Injectable()
 export class InspectionsService {
@@ -25,6 +26,41 @@ export class InspectionsService {
     private readonly equipmentsService: EquipmentsService,
   ) {}
 
+  private calculateInspectionStatusAndScore(answers: Answer[]): {
+    status: StatusEnum;
+    score: number;
+  } {
+    if (!answers.length) {
+      return { status: StatusEnum.OK, score: 0 };
+    }
+
+    let hasError = false;
+    let hasWarning = false;
+    let rawScore = 0;
+
+    for (const answer of answers) {
+      if (answer.status === StatusEnum.ERROR) {
+        hasError = true;
+      } else if (answer.status === StatusEnum.WARNING) {
+        hasWarning = true;
+        rawScore += 0.5;
+      } else if (answer.status === StatusEnum.OK) {
+        rawScore += 1;
+      }
+    }
+
+    const status = hasError
+      ? StatusEnum.ERROR
+      : hasWarning
+        ? StatusEnum.WARNING
+        : StatusEnum.OK;
+
+    const maxScore = answers.length;
+    const normalizedScore = maxScore > 0 ? (rawScore / maxScore) * 100 : 0;
+
+    return { status, score: normalizedScore };
+  }
+
   public async create(dto: CreateInspectionDto): Promise<ResponseDto<string>> {
     const equipmentResponse = await this.equipmentsService.findOne(
       dto.equipmentId,
@@ -36,13 +72,12 @@ export class InspectionsService {
 
     const { result: equipment } = equipmentResponse;
 
-    const inspection = await this.inspectionRepo.save({
+    const inspection = this.inspectionRepo.create({
       equipment,
+      answers: [],
     });
 
     if (dto.answers?.length) {
-      const answers: Answer[] = [];
-
       for (const answerDto of dto.answers) {
         const question = await this.questionRepo.findOne({
           where: { id: answerDto.questionId },
@@ -56,19 +91,24 @@ export class InspectionsService {
           status: answerDto.status,
           text: answerDto.text,
           picture: answerDto.picture ?? null,
-          inspection,
           question,
         });
 
-        answers.push(answer);
+        inspection.answers.push(answer);
       }
-
-      await this.answerRepo.save(answers);
     }
+
+    const { status, score } = this.calculateInspectionStatusAndScore(
+      inspection.answers,
+    );
+    inspection.status = status;
+    inspection.score = score;
+
+    const createdInspection = await this.inspectionRepo.save(inspection);
 
     return {
       message: "بازرسی با موفقیت ایجاد شد.",
-      result: inspection.id,
+      result: createdInspection.id,
     };
   }
 
@@ -141,9 +181,9 @@ export class InspectionsService {
         await this.answerRepo.remove(existingAnswers);
       }
 
-      if (dto.answers.length) {
-        const answers: Answer[] = [];
+      const answers: Answer[] = [];
 
+      if (dto.answers.length) {
         for (const answerDto of dto.answers) {
           const question = await this.questionRepo.findOne({
             where: { id: answerDto.questionId },
@@ -163,9 +203,13 @@ export class InspectionsService {
 
           answers.push(answer);
         }
-
-        await this.answerRepo.save(answers);
       }
+
+      const { status, score } = this.calculateInspectionStatusAndScore(answers);
+      inspection.status = status;
+      inspection.score = score;
+
+      await this.answerRepo.save(answers);
     }
 
     await this.inspectionRepo.save(inspection);

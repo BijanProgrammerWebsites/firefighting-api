@@ -11,7 +11,7 @@ import { UpdateUserDto } from "./dto/update-user.dto";
 
 import { User } from "./entities/user.entity";
 import { SafeUser } from "../shared/types/safe-user.type";
-import { Role } from "../shared/enums/role.enum";
+import { RoleEnum } from "../shared/enums/role.enum";
 
 @Injectable()
 export class UsersService {
@@ -41,7 +41,7 @@ export class UsersService {
   }
 
   public async update(user: User, dto: UpdateUserDto): Promise<ResponseDto> {
-    if (!(user.role === Role.ADMIN || user.id === dto.id)) {
+    if (!(user.role === RoleEnum.ADMIN || user.id === dto.id)) {
       throw new UnauthorizedException(
         "شما مجاز به به‌روزرسانی این کاربر نیستید.",
       );
