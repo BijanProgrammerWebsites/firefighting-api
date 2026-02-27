@@ -75,8 +75,20 @@ export class TemplatesService {
     dto: UpdateTemplateDto,
   ): Promise<ResponseDto> {
     const template = await this.getTemplateOrFail(id);
-
     const updatedTemplate = assignDefinedValues(template, dto);
+
+    if (dto.standardId !== undefined) {
+      const standard = await this.standardRepo.findOne({
+        where: { id: dto.standardId },
+      });
+
+      if (!standard) {
+        throw new NotFoundException("Standard not found.");
+      }
+
+      updatedTemplate.standard = standard;
+    }
+
     await this.templateRepo.save(updatedTemplate);
 
     return { message: "قالب با موفقیت به‌روزرسانی شد." };

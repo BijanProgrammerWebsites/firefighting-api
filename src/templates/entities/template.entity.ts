@@ -27,7 +27,7 @@ export class Template {
   standard: Standard;
 
   @RelationId((template: Template) => template.standard)
-  standardId: number;
+  standardId: string;
 
   @OneToMany(() => Equipment, (equipment) => equipment.template)
   equipments: Equipment[];
