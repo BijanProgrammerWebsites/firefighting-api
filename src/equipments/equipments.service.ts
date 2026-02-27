@@ -175,7 +175,10 @@ export class EquipmentsService {
   }
 
   private async getEquipmentOrFail(id: string): Promise<Equipment> {
-    const equipment = await this.equipmentRepo.findOne({ where: { id } });
+    const equipment = await this.equipmentRepo.findOne({
+      where: { id },
+      relations: { template: { standard: { questions: true } } },
+    });
 
     if (!equipment) {
       throw new NotFoundException("تجهیز پیدا نشد.");
