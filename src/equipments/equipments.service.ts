@@ -14,13 +14,15 @@ import { ResponseDto } from "../shared/dto/response.dto";
 import { assignDefinedValues } from "../shared/utils/object.utils";
 import { UnitsService } from "../units/units.service";
 import { Inspection } from "../inspections/entities/inspection.entity";
-import { BucketsDto } from "./dto/buckets.dto";
+import { BucketItemDto, BucketsDto } from "./dto/buckets.dto";
 
 @Injectable()
 export class EquipmentsService {
   public constructor(
     @InjectRepository(Equipment)
     private equipmentRepo: Repository<Equipment>,
+    @InjectRepository(Inspection)
+    private inspectionRepo: Repository<Inspection>,
     private readonly unitsService: UnitsService,
   ) {}
 
@@ -63,32 +65,54 @@ export class EquipmentsService {
   }
 
   public async buckets(): Promise<ResponseDto<BucketsDto>> {
-    const qb = this.equipmentRepo
-      .createQueryBuilder("equipment")
-      .leftJoinAndSelect("equipment.template", "template")
-      .leftJoin(
+    const equipments = await this.equipmentRepo.find({
+      relations: ["template"],
+      order: { position: "ASC" },
+    });
+
+    if (!equipments.length) {
+      return {
+        message: "داشبورد با موفقیت دریافت شد.",
+        result: {
+          today: [],
+          next7Days: [],
+          next30Days: [],
+          overdue: [],
+        },
+      };
+    }
+
+    const equipmentIds = equipments.map((e) => e.id);
+
+    const lastInspections = await this.inspectionRepo
+      .createQueryBuilder("inspection")
+      .leftJoinAndSelect("inspection.equipment", "equipment")
+      .leftJoinAndSelect("inspection.answers", "answers")
+      .innerJoin(
         (subQ) =>
           subQ
-            .from(Inspection, "inspection")
-            .select('inspection."equipmentId"', "equipmentId")
-            .addSelect('MAX(inspection."createdDate")', "lastInspectionAt")
-            .groupBy('inspection."equipmentId"'),
-        "last_inspection",
-        'last_inspection."equipmentId" = equipment.id',
+            .from(Inspection, "i")
+            .select('i."equipmentId"', "equipmentId")
+            .addSelect('MAX(i."createdDate")', "maxCreatedDate")
+            .groupBy('i."equipmentId"'),
+        "latest",
+        'latest."equipmentId" = inspection."equipmentId" AND latest."maxCreatedDate" = inspection."createdDate"',
       )
-      // expose last inspection date explicitly in raw results
-      .addSelect('last_inspection."lastInspectionAt"', "lastInspectionAt")
-      // expose inspection period explicitly in raw results
-      .addSelect('template."inspectionPeriod"', "inspectionPeriod");
+      .where('inspection."equipmentId" IN (:...equipmentIds)', { equipmentIds })
+      .getMany();
 
-    const { raw, entities } = await qb.getRawAndEntities();
+    const lastInspectionMap = new Map<string, Inspection>();
+    for (const inspection of lastInspections) {
+      if (inspection.equipment?.id) {
+        lastInspectionMap.set(inspection.equipment.id, inspection);
+      }
+    }
 
     const buckets: BucketsDto = {
-      overdue: [],
       today: [],
-      thisWeek: [],
-      nextWeek: [],
-      later: [],
+      next7Days: [],
+      next30Days: [],
+      overdue: [],
     };
 
     const startOfToday = new Date();
@@ -96,19 +120,16 @@ export class EquipmentsService {
 
     const msInDay = 24 * 60 * 60 * 1000;
 
-    raw.forEach((row, index) => {
-      const lastInspectionRaw =
-        (row as { lastInspectionAt?: Date }).lastInspectionAt ??
-        (row as any)["last_inspection_lastInspectionAt"];
-      const inspectionPeriodRaw =
-        (row as { inspectionPeriod?: number }).inspectionPeriod ??
-        (row as any)["template_inspectionPeriod"];
+    for (const equipment of equipments) {
+      const lastInspection = lastInspectionMap.get(equipment.id) ?? null;
 
-      let bucket: keyof BucketsDto = "overdue";
+      let bucketKey: keyof BucketsDto = "overdue";
 
-      if (lastInspectionRaw && inspectionPeriodRaw != null) {
-        const lastInspectionAt = new Date(lastInspectionRaw as any);
-        const inspectionPeriod = Number(inspectionPeriodRaw);
+      if (!lastInspection) {
+        bucketKey = "overdue";
+      } else {
+        const lastInspectionAt = lastInspection.createdDate;
+        const inspectionPeriod = equipment.template.inspectionPeriod;
 
         const nextInspectionAt = new Date(
           lastInspectionAt.getTime() + inspectionPeriod * msInDay,
@@ -122,20 +143,26 @@ export class EquipmentsService {
         );
 
         if (diffDays < 0) {
-          bucket = "overdue";
+          bucketKey = "overdue";
         } else if (diffDays === 0) {
-          bucket = "today";
+          bucketKey = "today";
         } else if (diffDays > 0 && diffDays <= 7) {
-          bucket = "thisWeek";
-        } else if (diffDays > 7 && diffDays <= 14) {
-          bucket = "nextWeek";
+          bucketKey = "next7Days";
+        } else if (diffDays > 7 && diffDays <= 30) {
+          bucketKey = "next30Days";
         } else {
-          bucket = "later";
+          // ignore items beyond 30 days
+          continue;
         }
       }
 
-      buckets[bucket].push(entities[index]);
-    });
+      const item: BucketItemDto = {
+        equipment,
+        lastInspection,
+      };
+
+      buckets[bucketKey].push(item);
+    }
 
     return {
       message: "داشبورد با موفقیت دریافت شد.",
