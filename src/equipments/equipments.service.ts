@@ -15,6 +15,7 @@ import { assignDefinedValues } from "../shared/utils/object.utils";
 import { UnitsService } from "../units/units.service";
 import { Inspection } from "../inspections/entities/inspection.entity";
 import { BucketsDto } from "./dto/buckets.dto";
+import { TemplatesService } from "../templates/templates.service";
 
 @Injectable()
 export class EquipmentsService {
@@ -23,10 +24,21 @@ export class EquipmentsService {
     private equipmentRepo: Repository<Equipment>,
     @InjectRepository(Inspection)
     private inspectionRepo: Repository<Inspection>,
+    private readonly templatesService: TemplatesService,
     private readonly unitsService: UnitsService,
   ) {}
 
   public async create(dto: CreateEquipmentDto): Promise<ResponseDto<string>> {
+    const templateResponse = await this.templatesService.findOne(
+      dto.templateId,
+    );
+
+    if ("error" in templateResponse) {
+      throw new InternalServerErrorException(templateResponse.error);
+    }
+
+    const { result: template } = templateResponse;
+
     const unitResponse = await this.unitsService.findOne(dto.unitId);
 
     if ("error" in unitResponse) {
@@ -44,6 +56,7 @@ export class EquipmentsService {
     const createdEquipment = await this.equipmentRepo.save({
       ...dto,
       position: maxPosition + 1,
+      template,
       unit,
     });
 
@@ -56,6 +69,10 @@ export class EquipmentsService {
   public async findAll(): Promise<ResponseDto<Equipment[]>> {
     const equipments = await this.equipmentRepo.find({
       order: { position: "ASC" },
+      relations: {
+        template: true,
+        unit: { zone: { site: true } },
+      },
     });
 
     return {
@@ -179,7 +196,10 @@ export class EquipmentsService {
   private async getEquipmentOrFail(id: string): Promise<Equipment> {
     const equipment = await this.equipmentRepo.findOne({
       where: { id },
-      relations: { template: { standard: { questions: true } } },
+      relations: {
+        template: { standard: { questions: true } },
+        unit: { zone: { site: true } },
+      },
     });
 
     if (!equipment) {
