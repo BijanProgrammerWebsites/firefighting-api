@@ -23,8 +23,8 @@ export class InspectionsController {
 
   @Roles(RoleEnum.ADMIN, RoleEnum.INSPECTOR)
   @Post()
-  public create(@Body() createInspectionDto: CreateInspectionDto) {
-    return this.inspectionService.create(createInspectionDto);
+  public create(@Body() dto: CreateInspectionDto) {
+    return this.inspectionService.create(dto);
   }
 
   @Get()
@@ -39,11 +39,8 @@ export class InspectionsController {
 
   @Roles(RoleEnum.ADMIN, RoleEnum.INSPECTOR)
   @Patch(":id")
-  public update(
-    @Param("id") id: string,
-    @Body() updateInspectionDto: UpdateInspectionDto,
-  ) {
-    return this.inspectionService.update(id, updateInspectionDto);
+  public update(@Param("id") id: string, @Body() dto: UpdateInspectionDto) {
+    return this.inspectionService.update(id, dto);
   }
 
   @Roles(RoleEnum.ADMIN, RoleEnum.INSPECTOR)

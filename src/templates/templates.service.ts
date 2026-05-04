@@ -51,16 +51,6 @@ export class TemplatesService {
     };
   }
 
-  private async getTemplateOrFail(id: string): Promise<Template> {
-    const template = await this.templateRepo.findOne({ where: { id } });
-
-    if (!template) {
-      throw new NotFoundException("قالب پیدا نشد.");
-    }
-
-    return template;
-  }
-
   public async findOne(id: string): Promise<ResponseDto<Template>> {
     const template = await this.getTemplateOrFail(id);
 
@@ -98,5 +88,15 @@ export class TemplatesService {
     await this.templateRepo.delete(id);
 
     return { message: "قالب با موفقیت حذف شد." };
+  }
+
+  private async getTemplateOrFail(id: string): Promise<Template> {
+    const template = await this.templateRepo.findOne({ where: { id } });
+
+    if (!template) {
+      throw new NotFoundException("قالب پیدا نشد.");
+    }
+
+    return template;
   }
 }

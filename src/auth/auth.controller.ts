@@ -17,8 +17,6 @@ import type { Request, Response } from "express";
 import { User } from "../users/entities/user.entity";
 
 import { GetUser } from "./decorators/get-user.decorator";
-
-import { SignUpDto } from "./dto/sign-up.dto";
 import { SignInDto } from "./dto/sign-in.dto";
 
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
@@ -26,9 +24,6 @@ import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 import { JwtPayloadType } from "./types/jwt-payload.type";
 
 import { AuthService } from "./auth.service";
-import { RolesGuard } from "./guards/roles.guard";
-import { Roles } from "./decorators/roles.decorator";
-import { RoleEnum } from "../shared/enums/role.enum";
 
 @Controller("auth")
 export class AuthController {
@@ -37,13 +32,6 @@ export class AuthController {
     private jwtService: JwtService,
     private configService: ConfigService,
   ) {}
-
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(RoleEnum.ADMIN)
-  @Post("sign-up")
-  public signUp(@Body() dto: SignUpDto) {
-    return this.authService.signUp(dto);
-  }
 
   @Post("sign-in")
   public signIn(

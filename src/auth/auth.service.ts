@@ -1,9 +1,4 @@
-import {
-  ConflictException,
-  Injectable,
-  InternalServerErrorException,
-  UnauthorizedException,
-} from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -17,8 +12,6 @@ import * as bcrypt from "bcrypt";
 import { ResponseDto } from "../shared/dto/response.dto";
 
 import { User } from "../users/entities/user.entity";
-
-import { SignUpDto } from "./dto/sign-up.dto";
 import { SignInDto } from "./dto/sign-in.dto";
 
 import { JwtPayloadType } from "./types/jwt-payload.type";
@@ -32,34 +25,6 @@ export class AuthService {
     private jwtService: JwtService,
     private configService: ConfigService,
   ) {}
-
-  public async signUp(dto: SignUpDto): Promise<ResponseDto> {
-    const { username, password } = dto;
-
-    const foundUser = await this.userRepo.findOne({
-      where: { username },
-    });
-
-    if (foundUser) {
-      throw new ConflictException("نام کاربری قبلاً استفاده شده است.");
-    }
-
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    const user = this.userRepo.create({
-      ...dto,
-      password: hashedPassword,
-    });
-
-    try {
-      await this.userRepo.save(user);
-
-      return { message: "ثبت‌نام با موفقیت انجام شد." };
-    } catch {
-      throw new InternalServerErrorException();
-    }
-  }
 
   public async signIn(
     dto: SignInDto,

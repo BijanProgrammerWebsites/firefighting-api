@@ -49,19 +49,6 @@ export class SitesService {
     };
   }
 
-  private async getSiteOrFail(id: string): Promise<Site> {
-    const site = await this.siteRepo.findOne({
-      where: { id },
-      relations: ["zones"],
-    });
-
-    if (!site) {
-      throw new NotFoundException("سایت پیدا نشد.");
-    }
-
-    return site;
-  }
-
   public async findOne(id: string): Promise<ResponseDto<Site>> {
     const site = await this.getSiteOrFail(id);
 
@@ -101,5 +88,18 @@ export class SitesService {
     await this.siteRepo.save([active, over, ...sites]);
 
     return { message: "سایت با موفقیت جابه‌جا شد." };
+  }
+
+  private async getSiteOrFail(id: string): Promise<Site> {
+    const site = await this.siteRepo.findOne({
+      where: { id },
+      relations: ["zones"],
+    });
+
+    if (!site) {
+      throw new NotFoundException("سایت پیدا نشد.");
+    }
+
+    return site;
   }
 }
