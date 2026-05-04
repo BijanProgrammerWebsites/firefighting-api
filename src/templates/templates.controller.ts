@@ -23,8 +23,8 @@ export class TemplatesController {
   constructor(private readonly templateService: TemplatesService) {}
 
   @Post()
-  public create(@Body() createTemplateDto: CreateTemplateDto) {
-    return this.templateService.create(createTemplateDto);
+  public create(@Body() dto: CreateTemplateDto) {
+    return this.templateService.create(dto);
   }
 
   @Get()
@@ -38,11 +38,8 @@ export class TemplatesController {
   }
 
   @Patch(":id")
-  public update(
-    @Param("id") id: string,
-    @Body() updateTemplateDto: UpdateTemplateDto,
-  ) {
-    return this.templateService.update(id, updateTemplateDto);
+  public update(@Param("id") id: string, @Body() dto: UpdateTemplateDto) {
+    return this.templateService.update(id, dto);
   }
 
   @Delete(":id")

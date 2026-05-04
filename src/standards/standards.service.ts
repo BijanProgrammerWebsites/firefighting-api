@@ -53,19 +53,6 @@ export class StandardsService {
     };
   }
 
-  private async getStandardOrFail(id: string): Promise<Standard> {
-    const standard = await this.standardRepo.findOne({
-      where: { id },
-      relations: ["questions"],
-    });
-
-    if (!standard) {
-      throw new NotFoundException("استاندارد پیدا نشد.");
-    }
-
-    return standard;
-  }
-
   public async findOne(id: string): Promise<ResponseDto<Standard>> {
     const standard = await this.getStandardOrFail(id);
 
@@ -131,5 +118,18 @@ export class StandardsService {
     await this.standardRepo.remove(standard);
 
     return { message: "استاندارد با موفقیت حذف شد." };
+  }
+
+  private async getStandardOrFail(id: string): Promise<Standard> {
+    const standard = await this.standardRepo.findOne({
+      where: { id },
+      relations: ["questions"],
+    });
+
+    if (!standard) {
+      throw new NotFoundException("استاندارد پیدا نشد.");
+    }
+
+    return standard;
   }
 }

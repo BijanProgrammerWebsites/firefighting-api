@@ -54,19 +54,6 @@ export class ZonesService {
     };
   }
 
-  private async getZoneOrFail(id: string): Promise<Zone> {
-    const zone = await this.zoneRepo.findOne({
-      where: { id },
-      relations: ["units"],
-    });
-
-    if (!zone) {
-      throw new NotFoundException("زون پیدا نشد.");
-    }
-
-    return zone;
-  }
-
   public async findOne(id: string): Promise<ResponseDto<Zone>> {
     const zone = await this.getZoneOrFail(id);
 
@@ -106,5 +93,18 @@ export class ZonesService {
     await this.zoneRepo.save([active, over, ...zones]);
 
     return { message: "زون با موفقیت جابه‌جا شد." };
+  }
+
+  private async getZoneOrFail(id: string): Promise<Zone> {
+    const zone = await this.zoneRepo.findOne({
+      where: { id },
+      relations: ["units"],
+    });
+
+    if (!zone) {
+      throw new NotFoundException("زون پیدا نشد.");
+    }
+
+    return zone;
   }
 }

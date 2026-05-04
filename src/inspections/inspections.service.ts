@@ -26,41 +26,6 @@ export class InspectionsService {
     private readonly equipmentsService: EquipmentsService,
   ) {}
 
-  private calculateInspectionStatusAndScore(answers: Answer[]): {
-    status: StatusEnum;
-    score: number;
-  } {
-    if (!answers.length) {
-      return { status: StatusEnum.OK, score: 0 };
-    }
-
-    let hasError = false;
-    let hasWarning = false;
-    let rawScore = 0;
-
-    for (const answer of answers) {
-      if (answer.status === StatusEnum.ERROR) {
-        hasError = true;
-      } else if (answer.status === StatusEnum.WARNING) {
-        hasWarning = true;
-        rawScore += 0.5;
-      } else if (answer.status === StatusEnum.OK) {
-        rawScore += 1;
-      }
-    }
-
-    const status = hasError
-      ? StatusEnum.ERROR
-      : hasWarning
-        ? StatusEnum.WARNING
-        : StatusEnum.OK;
-
-    const maxScore = answers.length;
-    const normalizedScore = maxScore > 0 ? (rawScore / maxScore) * 100 : 0;
-
-    return { status, score: normalizedScore };
-  }
-
   public async create(dto: CreateInspectionDto): Promise<ResponseDto<string>> {
     const equipmentResponse = await this.equipmentsService.findOne(
       dto.equipmentId,
@@ -122,19 +87,6 @@ export class InspectionsService {
       message: "بازرسی‌ها با موفقیت دریافت شدند.",
       result: inspections,
     };
-  }
-
-  private async getInspectionOrFail(id: string): Promise<Inspection> {
-    const inspection = await this.inspectionRepo.findOne({
-      where: { id },
-      relations: ["equipment"],
-    });
-
-    if (!inspection) {
-      throw new NotFoundException("بازرسی پیدا نشد.");
-    }
-
-    return inspection;
   }
 
   public async findOne(id: string): Promise<ResponseDto<Inspection>> {
@@ -231,5 +183,53 @@ export class InspectionsService {
     await this.inspectionRepo.remove(inspection);
 
     return { message: "بازرسی با موفقیت حذف شد." };
+  }
+
+  private async getInspectionOrFail(id: string): Promise<Inspection> {
+    const inspection = await this.inspectionRepo.findOne({
+      where: { id },
+      relations: ["equipment"],
+    });
+
+    if (!inspection) {
+      throw new NotFoundException("بازرسی پیدا نشد.");
+    }
+
+    return inspection;
+  }
+
+  private calculateInspectionStatusAndScore(answers: Answer[]): {
+    status: StatusEnum;
+    score: number;
+  } {
+    if (!answers.length) {
+      return { status: StatusEnum.OK, score: 0 };
+    }
+
+    let hasError = false;
+    let hasWarning = false;
+    let rawScore = 0;
+
+    for (const answer of answers) {
+      if (answer.status === StatusEnum.ERROR) {
+        hasError = true;
+      } else if (answer.status === StatusEnum.WARNING) {
+        hasWarning = true;
+        rawScore += 0.5;
+      } else if (answer.status === StatusEnum.OK) {
+        rawScore += 1;
+      }
+    }
+
+    const status = hasError
+      ? StatusEnum.ERROR
+      : hasWarning
+        ? StatusEnum.WARNING
+        : StatusEnum.OK;
+
+    const maxScore = answers.length;
+    const normalizedScore = maxScore > 0 ? (rawScore / maxScore) * 100 : 0;
+
+    return { status, score: normalizedScore };
   }
 }

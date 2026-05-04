@@ -23,8 +23,8 @@ export class StandardsController {
   constructor(private readonly standardsService: StandardsService) {}
 
   @Post()
-  public create(@Body() createStandardDto: CreateStandardDto) {
-    return this.standardsService.create(createStandardDto);
+  public create(@Body() dto: CreateStandardDto) {
+    return this.standardsService.create(dto);
   }
 
   @Get()
@@ -38,11 +38,8 @@ export class StandardsController {
   }
 
   @Patch(":id")
-  public update(
-    @Param("id") id: string,
-    @Body() updateStandardDto: UpdateStandardDto,
-  ) {
-    return this.standardsService.update(id, updateStandardDto);
+  public update(@Param("id") id: string, @Body() dto: UpdateStandardDto) {
+    return this.standardsService.update(id, dto);
   }
 
   @Delete(":id")

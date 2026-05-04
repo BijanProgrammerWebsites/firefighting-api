@@ -20,6 +20,15 @@ export class QuestionsService {
     };
   }
 
+  public async findOne(id: string): Promise<ResponseDto<Question>> {
+    const question = await this.getQuestionOrFail(id);
+
+    return {
+      message: "سؤال با موفقیت دریافت شد.",
+      result: question,
+    };
+  }
+
   private async getQuestionOrFail(id: string): Promise<Question> {
     const question = await this.questionRepo.findOne({
       where: { id },
@@ -31,14 +40,5 @@ export class QuestionsService {
     }
 
     return question;
-  }
-
-  public async findOne(id: string): Promise<ResponseDto<Question>> {
-    const question = await this.getQuestionOrFail(id);
-
-    return {
-      message: "سؤال با موفقیت دریافت شد.",
-      result: question,
-    };
   }
 }

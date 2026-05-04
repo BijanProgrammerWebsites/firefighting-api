@@ -54,19 +54,6 @@ export class UnitsService {
     };
   }
 
-  private async getUnitOrFail(id: string): Promise<Unit> {
-    const unit = await this.unitRepo.findOne({
-      where: { id },
-      relations: ["equipments"],
-    });
-
-    if (!unit) {
-      throw new NotFoundException("یونیت پیدا نشد.");
-    }
-
-    return unit;
-  }
-
   public async findOne(id: string): Promise<ResponseDto<Unit>> {
     const unit = await this.getUnitOrFail(id);
 
@@ -106,5 +93,18 @@ export class UnitsService {
     await this.unitRepo.save([active, over, ...units]);
 
     return { message: "یونیت با موفقیت جابه‌جا شد." };
+  }
+
+  private async getUnitOrFail(id: string): Promise<Unit> {
+    const unit = await this.unitRepo.findOne({
+      where: { id },
+      relations: ["equipments"],
+    });
+
+    if (!unit) {
+      throw new NotFoundException("یونیت پیدا نشد.");
+    }
+
+    return unit;
   }
 }

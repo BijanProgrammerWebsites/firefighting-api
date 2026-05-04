@@ -193,22 +193,6 @@ export class EquipmentsService {
     };
   }
 
-  private async getEquipmentOrFail(id: string): Promise<Equipment> {
-    const equipment = await this.equipmentRepo.findOne({
-      where: { id },
-      relations: {
-        template: { standard: { questions: true } },
-        unit: { zone: { site: true } },
-      },
-    });
-
-    if (!equipment) {
-      throw new NotFoundException("تجهیز پیدا نشد.");
-    }
-
-    return equipment;
-  }
-
   public async findOne(id: string): Promise<ResponseDto<Equipment>> {
     const equipment = await this.getEquipmentOrFail(id);
 
@@ -273,5 +257,21 @@ export class EquipmentsService {
     await this.equipmentRepo.save([active, over, ...equipments]);
 
     return { message: "تجهیز با موفقیت جابه‌جا شد." };
+  }
+
+  private async getEquipmentOrFail(id: string): Promise<Equipment> {
+    const equipment = await this.equipmentRepo.findOne({
+      where: { id },
+      relations: {
+        template: { standard: { questions: true } },
+        unit: { zone: { site: true } },
+      },
+    });
+
+    if (!equipment) {
+      throw new NotFoundException("تجهیز پیدا نشد.");
+    }
+
+    return equipment;
   }
 }

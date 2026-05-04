@@ -1,30 +1,4 @@
-import {
-  IsEnum,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  IsUUID,
-} from "class-validator";
-import { Trim } from "../../shared/decorators/trim.decorator";
-import { RoleEnum } from "../../shared/enums/role.enum";
+import { PartialType } from "@nestjs/swagger";
+import { CreateUserDto } from "./create-user.dto";
 
-export class UpdateUserDto {
-  @IsUUID()
-  id: string;
-
-  @IsOptional()
-  @IsString()
-  @Trim()
-  @IsNotEmpty()
-  username?: string;
-
-  @IsOptional()
-  @IsString()
-  @Trim()
-  @IsNotEmpty()
-  password?: string;
-
-  @IsOptional()
-  @IsEnum(RoleEnum)
-  role?: RoleEnum;
-}
+export class UpdateUserDto extends PartialType(CreateUserDto) {}

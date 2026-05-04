@@ -33,34 +33,6 @@ export class AuthService {
     private configService: ConfigService,
   ) {}
 
-  public async signUp(dto: SignUpDto): Promise<ResponseDto> {
-    const { username, password } = dto;
-
-    const foundUser = await this.userRepo.findOne({
-      where: { username },
-    });
-
-    if (foundUser) {
-      throw new ConflictException("نام کاربری قبلاً استفاده شده است.");
-    }
-
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    const user = this.userRepo.create({
-      ...dto,
-      password: hashedPassword,
-    });
-
-    try {
-      await this.userRepo.save(user);
-
-      return { message: "ثبت‌نام با موفقیت انجام شد." };
-    } catch {
-      throw new InternalServerErrorException();
-    }
-  }
-
   public async signIn(
     dto: SignInDto,
     res: Response,
