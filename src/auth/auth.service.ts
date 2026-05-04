@@ -1,9 +1,4 @@
-import {
-  ConflictException,
-  Injectable,
-  InternalServerErrorException,
-  UnauthorizedException,
-} from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -17,8 +12,6 @@ import * as bcrypt from "bcrypt";
 import { ResponseDto } from "../shared/dto/response.dto";
 
 import { User } from "../users/entities/user.entity";
-
-import { SignUpDto } from "./dto/sign-up.dto";
 import { SignInDto } from "./dto/sign-in.dto";
 
 import { JwtPayloadType } from "./types/jwt-payload.type";
