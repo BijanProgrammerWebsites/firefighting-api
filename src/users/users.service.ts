@@ -59,7 +59,7 @@ export class UsersService {
     };
   }
 
-  public async findOne(id: string): Promise<ResponseDto<User>> {
+  public async findOne(id: string): Promise<ResponseDto<SafeUser>> {
     const user = await this.getUserOrFail(id);
 
     return {
