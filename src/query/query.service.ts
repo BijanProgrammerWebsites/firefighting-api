@@ -5,6 +5,8 @@ import { Repository } from "typeorm";
 import { Inspection } from "../inspections/entities/inspection.entity";
 import { BucketsDto } from "../equipments/dto/buckets.dto";
 import { StatusEnum } from "../shared/enums/status.enum";
+import { ScopeType } from "../shared/types/scope.type";
+import { generateScopeWhereClause } from "../shared/utils/scope.utils";
 
 @Injectable()
 export class QueryService {
@@ -15,10 +17,19 @@ export class QueryService {
     private inspectionRepo: Repository<Inspection>,
   ) {}
 
-  public async generateLastInspectionMap(): Promise<Map<string, Inspection>> {
+  public async findTotalEquipments(scope?: ScopeType): Promise<number> {
+    return await this.equipmentRepo.count({
+      where: generateScopeWhereClause(scope),
+    });
+  }
+
+  public async generateLastInspectionMap(
+    scope?: ScopeType,
+  ): Promise<Map<string, Inspection>> {
     const equipments = await this.equipmentRepo.find({
       relations: ["template"],
       order: { position: "ASC" },
+      where: generateScopeWhereClause(scope),
     });
 
     const equipmentIds = equipments.map((e) => e.id);
@@ -50,10 +61,11 @@ export class QueryService {
     return lastInspectionMap;
   }
 
-  public async generateBuckets(): Promise<BucketsDto> {
+  public async generateBuckets(scope?: ScopeType): Promise<BucketsDto> {
     const equipments = await this.equipmentRepo.find({
       relations: ["template"],
       order: { position: "ASC" },
+      where: generateScopeWhereClause(scope),
     });
 
     if (!equipments.length) {
@@ -134,10 +146,12 @@ export class QueryService {
 
   public async findEquipmentsByStatus(
     status: StatusEnum,
+    scope?: ScopeType,
   ): Promise<Equipment[]> {
     const equipments = await this.equipmentRepo.find({
       relations: ["template"],
       order: { position: "ASC" },
+      where: generateScopeWhereClause(scope),
     });
 
     const lastInspectionMap = await this.generateLastInspectionMap();
