@@ -17,6 +17,7 @@ import { Inspection } from "../inspections/entities/inspection.entity";
 import { BucketsDto } from "../query/dto/buckets.dto";
 import { TemplatesService } from "../templates/templates.service";
 import { QueryService } from "../query/query.service";
+import { ScopeType } from "../shared/types/scope.type";
 
 @Injectable()
 export class EquipmentsService {
@@ -83,8 +84,8 @@ export class EquipmentsService {
     };
   }
 
-  public async buckets(): Promise<ResponseDto<BucketsDto>> {
-    const buckets = await this.queryService.generateBuckets();
+  public async buckets(scope?: ScopeType): Promise<ResponseDto<BucketsDto>> {
+    const buckets = await this.queryService.generateBuckets(scope);
 
     return {
       message: "داشبورد با موفقیت دریافت شد.",

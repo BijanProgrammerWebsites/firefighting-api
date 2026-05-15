@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from "@nestjs/common";
 import { EquipmentsService } from "./equipments.service";
@@ -34,8 +35,12 @@ export class EquipmentsController {
   }
 
   @Get("buckets")
-  public buckets() {
-    return this.equipmentsService.buckets();
+  public buckets(
+    @Query("siteId") siteId?: string,
+    @Query("zoneId") zoneId?: string,
+    @Query("unitId") unitId?: string,
+  ) {
+    return this.equipmentsService.buckets({ siteId, zoneId, unitId });
   }
 
   @Get(":id")
