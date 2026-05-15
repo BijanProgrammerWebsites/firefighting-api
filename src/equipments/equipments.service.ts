@@ -14,7 +14,7 @@ import { ResponseDto } from "../shared/dto/response.dto";
 import { assignDefinedValues } from "../shared/utils/object.utils";
 import { UnitsService } from "../units/units.service";
 import { Inspection } from "../inspections/entities/inspection.entity";
-import { BucketsDto } from "./dto/buckets.dto";
+import { BucketsDto } from "../query/dto/buckets.dto";
 import { TemplatesService } from "../templates/templates.service";
 import { QueryService } from "../query/query.service";
 

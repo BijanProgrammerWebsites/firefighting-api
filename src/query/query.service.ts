@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Equipment } from "../equipments/entities/equipment.entity";
 import { Repository } from "typeorm";
 import { Inspection } from "../inspections/entities/inspection.entity";
-import { BucketsDto } from "../equipments/dto/buckets.dto";
+import { BucketsDto } from "./dto/buckets.dto";
 import { StatusEnum } from "../shared/enums/status.enum";
 import { ScopeType } from "../shared/types/scope.type";
 import { generateScopeWhereClause } from "../shared/utils/scope.utils";
@@ -67,16 +67,6 @@ export class QueryService {
       order: { position: "ASC" },
       where: generateScopeWhereClause(scope),
     });
-
-    if (!equipments.length) {
-      return {
-        withoutHistory: [],
-        overdue: [],
-        today: [],
-        next7Days: [],
-        next30Days: [],
-      };
-    }
 
     const lastInspectionMap = await this.generateLastInspectionMap();
 
