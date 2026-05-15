@@ -4,6 +4,7 @@ import { Equipment } from "../equipments/entities/equipment.entity";
 import { Repository } from "typeorm";
 import { Inspection } from "../inspections/entities/inspection.entity";
 import { BucketsDto } from "../equipments/dto/buckets.dto";
+import { StatusEnum } from "../shared/enums/status.enum";
 
 @Injectable()
 export class QueryService {
@@ -14,21 +15,11 @@ export class QueryService {
     private inspectionRepo: Repository<Inspection>,
   ) {}
 
-  public async generateBuckets(): Promise<BucketsDto> {
+  public async generateLastInspectionMap(): Promise<Map<string, Inspection>> {
     const equipments = await this.equipmentRepo.find({
       relations: ["template"],
       order: { position: "ASC" },
     });
-
-    if (!equipments.length) {
-      return {
-        withoutHistory: [],
-        overdue: [],
-        today: [],
-        next7Days: [],
-        next30Days: [],
-      };
-    }
 
     const equipmentIds = equipments.map((e) => e.id);
 
@@ -55,6 +46,27 @@ export class QueryService {
         lastInspectionMap.set(inspection.equipment.id, inspection);
       }
     }
+
+    return lastInspectionMap;
+  }
+
+  public async generateBuckets(): Promise<BucketsDto> {
+    const equipments = await this.equipmentRepo.find({
+      relations: ["template"],
+      order: { position: "ASC" },
+    });
+
+    if (!equipments.length) {
+      return {
+        withoutHistory: [],
+        overdue: [],
+        today: [],
+        next7Days: [],
+        next30Days: [],
+      };
+    }
+
+    const lastInspectionMap = await this.generateLastInspectionMap();
 
     const buckets: BucketsDto = {
       withoutHistory: [],
@@ -118,5 +130,21 @@ export class QueryService {
     }
 
     return buckets;
+  }
+
+  public async findEquipmentsByStatus(
+    status: StatusEnum,
+  ): Promise<Equipment[]> {
+    const equipments = await this.equipmentRepo.find({
+      relations: ["template"],
+      order: { position: "ASC" },
+    });
+
+    const lastInspectionMap = await this.generateLastInspectionMap();
+
+    return equipments.filter((equipment) => {
+      const lastInspection = lastInspectionMap.get(equipment.id) ?? null;
+      return lastInspection?.status === status;
+    });
   }
 }

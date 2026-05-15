@@ -5,6 +5,7 @@ import { ResponseDto } from "../shared/dto/response.dto";
 import { Equipment } from "../equipments/entities/equipment.entity";
 import { KpiType } from "./types/kpi.type";
 import { QueryService } from "../query/query.service";
+import { StatusEnum } from "../shared/enums/status.enum";
 
 @Injectable()
 export class DashboardService {
@@ -21,11 +22,14 @@ export class DashboardService {
     const todayRemainingInspections = buckets.today.length;
     const overdueInspections = buckets.overdue.length;
 
+    const outOfServiceEquipments =
+      await this.queryService.findEquipmentsByStatus(StatusEnum.ERROR);
+
     return {
       message: "اطلاعات با موفقیت دریافت شد.",
       result: {
         totalEquipments,
-        outOfServiceEquipments: -1,
+        outOfServiceEquipments: outOfServiceEquipments.length,
         todayRemainingInspections,
         overdueInspections,
         totalDefects: -1,
