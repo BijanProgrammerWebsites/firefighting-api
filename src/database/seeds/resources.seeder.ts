@@ -11,7 +11,8 @@ import { Standard } from "../../standards/entities/standard.entity";
 import { Template } from "../../templates/entities/template.entity";
 import { Unit } from "../../units/entities/unit.entity";
 import { Zone } from "../../zones/entities/zone.entity";
-import { StatusEnum } from "../../shared/enums/status.enum";
+import { EquipmentStatusEnum } from "../../shared/enums/equipment-status.enum";
+import { DefectSeverityEnum } from "../../shared/enums/defect-severity.enum";
 
 export class ResourcesSeeder implements Seeder {
   async run(dataSource: DataSource) {
@@ -191,7 +192,7 @@ export class ResourcesSeeder implements Seeder {
     for (const equipment of equipments) {
       const createdDate = inspectionCreatedDatesByTitle[equipment.title] ?? now;
 
-      // Prepare inspection; status/score will be computed from answers below
+      // Prepare inspection; status will be computed from answers below
       const inspection = inspectionRepo.create({
         equipment,
         createdDate,
@@ -213,52 +214,46 @@ export class ResourcesSeeder implements Seeder {
       }
 
       const answersPayload = relatedQuestions.map((question, index) => {
-        const status =
+        const severity =
           index === 0
-            ? StatusEnum.OK
+            ? null
             : index === 1
-              ? StatusEnum.WARNING
-              : StatusEnum.ERROR;
+              ? DefectSeverityEnum.MEDIUM
+              : DefectSeverityEnum.CRITICAL;
+
+        const defect = severity !== null ? { severity, equipment } : null;
 
         return {
-          status,
           text:
-            status === StatusEnum.OK
+            severity === null
               ? "مطابق استاندارد"
-              : status === StatusEnum.WARNING
+              : severity === DefectSeverityEnum.MEDIUM
                 ? "ایراد جزئی شناسایی شد"
                 : "عدم انطباق؛ نیازمند اقدام اصلاحی است",
           picture: null,
           inspection,
           question,
+          defect,
         };
       });
 
-      // Compute inspection status and normalized score (0–100) based on seeded answers
-      let hasError = false;
-      let hasWarning = false;
-      let rawScore = 0;
+      // Compute inspection status based on seeded answers
+      const hasError = answersPayload.some(
+        (answer) => answer.defect?.severity === DefectSeverityEnum.CRITICAL,
+      );
 
-      for (const answer of answersPayload) {
-        if (answer.status === StatusEnum.ERROR) {
-          hasError = true;
-        } else if (answer.status === StatusEnum.WARNING) {
-          hasWarning = true;
-          rawScore += 0.5;
-        } else if (answer.status === StatusEnum.OK) {
-          rawScore += 1;
-        }
-      }
+      const hasWarning = answersPayload.some(
+        (answer) => answer.defect?.severity === DefectSeverityEnum.MEDIUM,
+      );
 
-      const inspectionStatus = hasError
-        ? StatusEnum.ERROR
+      inspection.status = hasError
+        ? EquipmentStatusEnum.OUT_OF_SERVICE
         : hasWarning
-          ? StatusEnum.WARNING
-          : StatusEnum.OK;
+          ? EquipmentStatusEnum.NEEDS_REPAIR
+          : EquipmentStatusEnum.IN_SERVICE;
 
-      inspection.status = inspectionStatus;
-      const maxScore = answersPayload.length;
-      inspection.score = maxScore > 0 ? (rawScore / maxScore) * 100 : 0;
+      equipment.status = inspection.status;
+      await equipmentRepo.save(equipment);
 
       await inspectionRepo.save(inspection);
 

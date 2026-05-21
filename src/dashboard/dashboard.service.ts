@@ -5,8 +5,9 @@ import { ResponseDto } from "../shared/dto/response.dto";
 import { Equipment } from "../equipments/entities/equipment.entity";
 import { KpiType } from "./types/kpi.type";
 import { QueryService } from "../query/query.service";
-import { StatusEnum } from "../shared/enums/status.enum";
+import { EquipmentStatusEnum } from "../shared/enums/equipment-status.enum";
 import { ScopeType } from "../shared/types/scope.type";
+import { DefectSeverityEnum } from "../shared/enums/defect-severity.enum";
 
 @Injectable()
 export class DashboardService {
@@ -19,18 +20,21 @@ export class DashboardService {
   public async kpi(scope: ScopeType): Promise<ResponseDto<KpiType>> {
     const totalEquipments = await this.queryService.findTotalEquipments(scope);
 
+    const outOfServiceEquipments =
+      await this.queryService.findEquipmentsByStatus(
+        EquipmentStatusEnum.OUT_OF_SERVICE,
+        scope,
+      );
+
     const buckets = await this.queryService.generateBuckets(scope);
     const todayRemainingInspections = buckets.today.length;
     const overdueInspections = buckets.overdue.length;
 
-    const outOfServiceEquipments =
-      await this.queryService.findEquipmentsByStatus(StatusEnum.ERROR, scope);
+    const totalDefects = await this.queryService.findTotalDefects(scope);
 
-    const defectedAnswers =
-      await this.queryService.findAllDefectedAnswers(scope);
-
-    const criticalAnswers = defectedAnswers.filter(
-      (answer) => answer.status === StatusEnum.ERROR,
+    const criticalDefects = await this.queryService.findDefectsBySeverity(
+      DefectSeverityEnum.CRITICAL,
+      scope,
     );
 
     return {
@@ -40,8 +44,8 @@ export class DashboardService {
         outOfServiceEquipments: outOfServiceEquipments.length,
         todayRemainingInspections,
         overdueInspections,
-        totalDefects: defectedAnswers.length,
-        criticalDefects: criticalAnswers.length,
+        totalDefects,
+        criticalDefects: criticalDefects.length,
       },
     };
   }

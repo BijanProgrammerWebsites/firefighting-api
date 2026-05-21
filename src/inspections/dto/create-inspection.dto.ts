@@ -8,15 +8,12 @@ import {
   ValidateNested,
 } from "class-validator";
 import { Type } from "class-transformer";
-import { StatusEnum } from "../../shared/enums/status.enum";
 import { Trim } from "../../shared/decorators/trim.decorator";
+import { DefectSeverityEnum } from "../../shared/enums/defect-severity.enum";
 
 export class CreateInspectionAnswerDto {
   @IsUUID()
   questionId: string;
-
-  @IsEnum(StatusEnum)
-  status: StatusEnum;
 
   @IsString()
   @Trim()
@@ -27,6 +24,10 @@ export class CreateInspectionAnswerDto {
   @Trim()
   @IsOptional()
   picture?: string | null;
+
+  @IsEnum(DefectSeverityEnum)
+  @IsOptional()
+  severity?: DefectSeverityEnum | null;
 }
 
 export class CreateInspectionDto {

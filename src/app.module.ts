@@ -29,8 +29,10 @@ import { Template } from "./templates/entities/template.entity";
 import { Question } from "./questions/entities/question.entity";
 import { Inspection } from "./inspections/entities/inspection.entity";
 import { Answer } from "./answers/entities/answer.entity";
-import { DashboardModule } from './dashboard/dashboard.module';
-import { QueryModule } from './query/query.module';
+import { DashboardModule } from "./dashboard/dashboard.module";
+import { QueryModule } from "./query/query.module";
+import { Defect } from "./defects/entities/defect.entity";
+import { DefectsModule } from "./defects/defects.module";
 
 @Module({
   imports: [
@@ -44,6 +46,7 @@ import { QueryModule } from './query/query.module';
       database: process.env.DATABASE_DATABASE!,
       entities: [
         Answer,
+        Defect,
         Equipment,
         Inspection,
         Question,
@@ -59,6 +62,7 @@ import { QueryModule } from './query/query.module';
     }),
     AuthModule,
     AnswersModule,
+    DefectsModule,
     EquipmentsModule,
     InspectionsModule,
     QuestionsModule,

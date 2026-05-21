@@ -1,13 +1,15 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Equipment } from "../equipments/entities/equipment.entity";
-import { Repository } from "typeorm";
+import { In, Not, Repository } from "typeorm";
 import { Inspection } from "../inspections/entities/inspection.entity";
 import { BucketsDto } from "./dto/buckets.dto";
-import { StatusEnum } from "../shared/enums/status.enum";
+import { EquipmentStatusEnum } from "../shared/enums/equipment-status.enum";
 import { ScopeType } from "../shared/types/scope.type";
 import { generateScopeWhereClause } from "../shared/utils/scope.utils";
-import { Answer } from "../answers/entities/answer.entity";
+import { Defect } from "../defects/entities/defect.entity";
+import { DefectStatusEnum } from "../shared/enums/defect-status.enum";
+import { DefectSeverityEnum } from "../shared/enums/defect-severity.enum";
 
 @Injectable()
 export class QueryService {
@@ -16,6 +18,8 @@ export class QueryService {
     private equipmentRepo: Repository<Equipment>,
     @InjectRepository(Inspection)
     private inspectionRepo: Repository<Inspection>,
+    @InjectRepository(Defect)
+    private defectRepo: Repository<Defect>,
   ) {}
 
   public async findTotalEquipments(scope?: ScopeType): Promise<number> {
@@ -136,34 +140,44 @@ export class QueryService {
   }
 
   public async findEquipmentsByStatus(
-    status: StatusEnum,
+    status: EquipmentStatusEnum,
     scope?: ScopeType,
   ): Promise<Equipment[]> {
-    const equipments = await this.equipmentRepo.find({
+    return await this.equipmentRepo.find({
       relations: ["template"],
       order: { position: "ASC" },
-      where: generateScopeWhereClause(scope),
-    });
-
-    const lastInspectionMap = await this.generateLastInspectionMap(scope);
-
-    return equipments.filter((equipment) => {
-      const lastInspection = lastInspectionMap.get(equipment.id) ?? null;
-      return lastInspection?.status === status;
+      where: [generateScopeWhereClause(scope), { status }],
     });
   }
 
-  public async findAllDefectedAnswers(scope?: ScopeType): Promise<Answer[]> {
-    const lastInspectionMap = await this.generateLastInspectionMap(scope);
-    const lastInspections = [...lastInspectionMap.values()];
+  public async findTotalDefects(scope?: ScopeType): Promise<number> {
+    const equipments = await this.equipmentRepo.find({
+      where: generateScopeWhereClause(scope),
+    });
 
-    return lastInspections
-      .flatMap((inspection) => inspection.answers)
-      .filter((answer) => {
-        return (
-          answer.status === StatusEnum.ERROR ||
-          answer.status === StatusEnum.WARNING
-        );
-      });
+    return this.defectRepo.count({
+      where: {
+        equipment: In(equipments.map((x) => x.id)),
+        status: Not(DefectStatusEnum.CLOSED),
+      },
+    });
+  }
+
+  public async findDefectsBySeverity(
+    severity: DefectSeverityEnum,
+    scope?: ScopeType,
+  ): Promise<Defect[]> {
+    const equipments = await this.equipmentRepo.find({
+      where: generateScopeWhereClause(scope),
+    });
+
+    return this.defectRepo.find({
+      relations: ["equipment"],
+      where: {
+        equipment: In(equipments.map((x) => x.id)),
+        status: Not(DefectStatusEnum.CLOSED),
+        severity,
+      },
+    });
   }
 }
