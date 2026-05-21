@@ -9,6 +9,7 @@ import { EquipmentStatusEnum } from "../shared/enums/equipment-status.enum";
 import { ScopeType } from "../shared/types/scope.type";
 import { DefectSeverityEnum } from "../shared/enums/defect-severity.enum";
 import { OverdueItemType } from "./types/overdue-item.type";
+import { DefectsBySeverityType } from "./types/defects-by-severity.type";
 
 @Injectable()
 export class DashboardService {
@@ -59,6 +60,18 @@ export class DashboardService {
     return {
       message: "اطلاعات با موفقیت دریافت شد.",
       result: overdueItems,
+    };
+  }
+
+  public async defectsBySeverity(
+    scope: ScopeType,
+  ): Promise<ResponseDto<DefectsBySeverityType>> {
+    const defectsBySeverity =
+      await this.queryService.groupDefectsBySeverity(scope);
+
+    return {
+      message: "اطلاعات با موفقیت دریافت شد.",
+      result: defectsBySeverity,
     };
   }
 }

@@ -24,4 +24,13 @@ export class DashboardController {
   ) {
     return this.dashboardService.overdue({ siteId, zoneId, unitId });
   }
+
+  @Get("defects-by-severity")
+  public defectsBySeverity(
+    @Query("siteId") siteId?: string,
+    @Query("zoneId") zoneId?: string,
+    @Query("unitId") unitId?: string,
+  ) {
+    return this.dashboardService.defectsBySeverity({ siteId, zoneId, unitId });
+  }
 }

@@ -15,6 +15,7 @@ import {
   calculateNextInspectionDate,
 } from "../shared/utils/time.utils";
 import { OverdueItemType } from "../dashboard/types/overdue-item.type";
+import { DefectsBySeverityType } from "../dashboard/types/defects-by-severity.type";
 
 @Injectable()
 export class QueryService {
@@ -163,5 +164,31 @@ export class QueryService {
         severity,
       },
     });
+  }
+
+  public async groupDefectsBySeverity(
+    scope?: ScopeType,
+  ): Promise<DefectsBySeverityType> {
+    const equipments = await this.equipmentRepo.find({
+      where: generateScopeWhereClause(scope),
+    });
+
+    const equipmentIds = equipments.map((e) => e.id);
+
+    const result = await this.defectRepo
+      .createQueryBuilder("defect")
+      .select('defect."severity"')
+      .addSelect('COUNT(defect."id")')
+      .leftJoin("defect.equipment", "equipment")
+      .where('defect."equipmentId" IN (:...equipmentIds)', { equipmentIds })
+      .andWhere('defect."status" <> :status', {
+        status: DefectStatusEnum.CLOSED,
+      })
+      .groupBy('defect."severity"')
+      .getRawMany<{ severity: DefectSeverityEnum; count: number }>();
+
+    return Object.fromEntries(
+      result.map((item) => [item.severity, item.count]),
+    ) as DefectsBySeverityType;
   }
 }
