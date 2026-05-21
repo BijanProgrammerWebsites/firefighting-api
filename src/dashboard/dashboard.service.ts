@@ -8,6 +8,7 @@ import { QueryService } from "../query/query.service";
 import { EquipmentStatusEnum } from "../shared/enums/equipment-status.enum";
 import { ScopeType } from "../shared/types/scope.type";
 import { DefectSeverityEnum } from "../shared/enums/defect-severity.enum";
+import { OverdueItemType } from "./types/overdue-item.type";
 
 @Injectable()
 export class DashboardService {
@@ -47,6 +48,17 @@ export class DashboardService {
         totalDefects,
         criticalDefects: criticalDefects.length,
       },
+    };
+  }
+
+  public async overdue(
+    scope: ScopeType,
+  ): Promise<ResponseDto<OverdueItemType[]>> {
+    const overdueItems = await this.queryService.generateOverdueItems(scope);
+
+    return {
+      message: "اطلاعات با موفقیت دریافت شد.",
+      result: overdueItems,
     };
   }
 }

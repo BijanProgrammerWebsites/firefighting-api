@@ -10,6 +10,11 @@ import { generateScopeWhereClause } from "../shared/utils/scope.utils";
 import { Defect } from "../defects/entities/defect.entity";
 import { DefectStatusEnum } from "../shared/enums/defect-status.enum";
 import { DefectSeverityEnum } from "../shared/enums/defect-severity.enum";
+import {
+  calculateDaysPassedSinceDeadline,
+  calculateNextInspectionDate,
+} from "../shared/utils/time.utils";
+import { OverdueItemType } from "../dashboard/types/overdue-item.type";
 
 @Injectable()
 export class QueryService {
@@ -28,21 +33,21 @@ export class QueryService {
     });
   }
 
-  public async generateLastInspectionMap(
-    scope?: ScopeType,
-  ): Promise<Map<string, Inspection>> {
+  public async findLatestInspections(scope?: ScopeType): Promise<Inspection[]> {
     const equipments = await this.equipmentRepo.find({
-      relations: ["template"],
-      order: { position: "ASC" },
       where: generateScopeWhereClause(scope),
     });
 
     const equipmentIds = equipments.map((e) => e.id);
 
-    const lastInspections = await this.inspectionRepo
+    return await this.inspectionRepo
       .createQueryBuilder("inspection")
       .leftJoinAndSelect("inspection.equipment", "equipment")
       .leftJoinAndSelect("inspection.answers", "answers")
+      .leftJoinAndSelect("equipment.template", "template")
+      .leftJoinAndSelect("equipment.unit", "unit")
+      .leftJoinAndSelect("unit.zone", "zone")
+      .leftJoinAndSelect("zone.site", "site")
       .innerJoin(
         (subQ) =>
           subQ
@@ -55,67 +60,22 @@ export class QueryService {
       )
       .where('inspection."equipmentId" IN (:...equipmentIds)', { equipmentIds })
       .getMany();
-
-    const lastInspectionMap = new Map<string, Inspection>();
-    for (const inspection of lastInspections) {
-      if (inspection.equipment?.id) {
-        lastInspectionMap.set(inspection.equipment.id, inspection);
-      }
-    }
-
-    return lastInspectionMap;
   }
 
   public async generateBuckets(scope?: ScopeType): Promise<BucketsDto> {
-    const equipments = await this.equipmentRepo.find({
-      relations: ["template"],
-      order: { position: "ASC" },
-      where: generateScopeWhereClause(scope),
-    });
-
-    const lastInspectionMap = await this.generateLastInspectionMap();
+    const latestInspections = await this.findLatestInspections(scope);
 
     const buckets: BucketsDto = {
-      withoutHistory: [],
       overdue: [],
       today: [],
       next7Days: [],
       next30Days: [],
     };
 
-    const startOfToday = new Date();
-    startOfToday.setHours(0, 0, 0, 0);
-
-    const msInDay = 24 * 60 * 60 * 1000;
-
-    for (const equipment of equipments) {
-      const lastInspection = lastInspectionMap.get(equipment.id) ?? null;
-
-      if (!lastInspection) {
-        buckets.withoutHistory.push({
-          equipment,
-          lastInspection: null,
-          nextInspectionAt: null,
-        });
-
-        continue;
-      }
-
+    for (const inspection of latestInspections) {
       let bucketKey: keyof BucketsDto = "overdue";
 
-      const lastInspectionAt = lastInspection.createdDate;
-      const inspectionPeriod = equipment.template.inspectionPeriod;
-
-      const nextInspectionAt = new Date(
-        lastInspectionAt.getTime() + inspectionPeriod * msInDay,
-      );
-
-      const startOfNextInspection = new Date(nextInspectionAt);
-      startOfNextInspection.setHours(0, 0, 0, 0);
-
-      const diffDays = Math.floor(
-        (startOfNextInspection.getTime() - startOfToday.getTime()) / msInDay,
-      );
+      const diffDays = calculateDaysPassedSinceDeadline(inspection);
 
       if (diffDays < 0) {
         bucketKey = "overdue";
@@ -129,14 +89,38 @@ export class QueryService {
         continue;
       }
 
+      const nextInspectionAt = calculateNextInspectionDate(inspection);
+
       buckets[bucketKey].push({
-        equipment,
-        lastInspection,
+        inspection,
         nextInspectionAt,
       });
     }
 
     return buckets;
+  }
+
+  public async generateOverdueItems(
+    scope?: ScopeType,
+  ): Promise<OverdueItemType[]> {
+    const latestInspections = await this.findLatestInspections(scope);
+
+    const items: OverdueItemType[] = [];
+
+    for (const inspection of latestInspections) {
+      const diffDays = calculateDaysPassedSinceDeadline(inspection);
+
+      if (diffDays >= 0) {
+        continue;
+      }
+
+      items.push({
+        inspection,
+        daysPassedSinceDeadline: -1 * diffDays,
+      });
+    }
+
+    return items;
   }
 
   public async findEquipmentsByStatus(

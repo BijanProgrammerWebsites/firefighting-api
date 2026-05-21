@@ -15,4 +15,13 @@ export class DashboardController {
   ) {
     return this.dashboardService.kpi({ siteId, zoneId, unitId });
   }
+
+  @Get("overdue")
+  public overdue(
+    @Query("siteId") siteId?: string,
+    @Query("zoneId") zoneId?: string,
+    @Query("unitId") unitId?: string,
+  ) {
+    return this.dashboardService.overdue({ siteId, zoneId, unitId });
+  }
 }
