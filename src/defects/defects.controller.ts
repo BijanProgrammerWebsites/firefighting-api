@@ -7,7 +7,6 @@ import { Roles } from "../auth/decorators/roles.decorator";
 import { RoleEnum } from "../shared/enums/role.enum";
 
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(RoleEnum.ADMIN)
 @Controller("defects")
 export class DefectsController {
   constructor(private readonly defectsService: DefectsService) {}
@@ -22,6 +21,7 @@ export class DefectsController {
     return this.defectsService.findOne(id);
   }
 
+  @Roles(RoleEnum.ADMIN, RoleEnum.INSPECTOR)
   @Patch(":id")
   public update(@Param("id") id: string, @Body() dto: UpdateDefectDto) {
     return this.defectsService.update(id, dto);

@@ -14,7 +14,12 @@ export class DefectsService {
   ) {}
 
   public async findAll(): Promise<ResponseDto<Defect[]>> {
-    const defects = await this.defectRepo.find();
+    const defects = await this.defectRepo.find({
+      relations: {
+        equipment: { unit: { zone: { site: true } } },
+        answer: { question: true },
+      },
+    });
 
     return {
       message: "نقص‌ها با موفقیت دریافت شدند.",
@@ -43,7 +48,10 @@ export class DefectsService {
   private async getDefectOrFail(id: string): Promise<Defect> {
     const defect = await this.defectRepo.findOne({
       where: { id },
-      relations: ["equipment"],
+      relations: {
+        equipment: { unit: { zone: { site: true } } },
+        answer: { question: true },
+      },
     });
 
     if (!defect) {
