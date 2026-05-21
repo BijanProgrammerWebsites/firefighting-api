@@ -10,6 +10,7 @@ import {
 import { Type } from "class-transformer";
 import { Trim } from "../../shared/decorators/trim.decorator";
 import { DefectSeverityEnum } from "../../shared/enums/defect-severity.enum";
+import { EquipmentStatusEnum } from "../../shared/enums/equipment-status.enum";
 
 export class CreateInspectionAnswerDto {
   @IsUUID()
@@ -17,7 +18,7 @@ export class CreateInspectionAnswerDto {
 
   @IsString()
   @Trim()
-  @IsNotEmpty()
+  @IsOptional()
   text: string;
 
   @IsString()
@@ -33,6 +34,9 @@ export class CreateInspectionAnswerDto {
 export class CreateInspectionDto {
   @IsUUID()
   equipmentId: string;
+
+  @IsEnum(EquipmentStatusEnum)
+  status: EquipmentStatusEnum;
 
   @IsArray()
   @ValidateNested({ each: true })

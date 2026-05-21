@@ -43,6 +43,7 @@ export class InspectionsService {
 
     const inspection = this.inspectionRepo.create({
       equipment,
+      status: dto.status,
       answers: [],
     });
 
