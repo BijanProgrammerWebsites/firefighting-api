@@ -26,6 +26,13 @@ export class DashboardService {
     const outOfServiceEquipments =
       await this.queryService.findEquipmentsByStatus(StatusEnum.ERROR, scope);
 
+    const defectedAnswers =
+      await this.queryService.findAllDefectedAnswers(scope);
+
+    const criticalAnswers = defectedAnswers.filter(
+      (answer) => answer.status === StatusEnum.ERROR,
+    );
+
     return {
       message: "اطلاعات با موفقیت دریافت شد.",
       result: {
@@ -33,8 +40,8 @@ export class DashboardService {
         outOfServiceEquipments: outOfServiceEquipments.length,
         todayRemainingInspections,
         overdueInspections,
-        totalDefects: -1,
-        criticalDefects: -1,
+        totalDefects: defectedAnswers.length,
+        criticalDefects: criticalAnswers.length,
       },
     };
   }

@@ -7,6 +7,7 @@ import { BucketsDto } from "./dto/buckets.dto";
 import { StatusEnum } from "../shared/enums/status.enum";
 import { ScopeType } from "../shared/types/scope.type";
 import { generateScopeWhereClause } from "../shared/utils/scope.utils";
+import { Answer } from "../answers/entities/answer.entity";
 
 @Injectable()
 export class QueryService {
@@ -144,11 +145,25 @@ export class QueryService {
       where: generateScopeWhereClause(scope),
     });
 
-    const lastInspectionMap = await this.generateLastInspectionMap();
+    const lastInspectionMap = await this.generateLastInspectionMap(scope);
 
     return equipments.filter((equipment) => {
       const lastInspection = lastInspectionMap.get(equipment.id) ?? null;
       return lastInspection?.status === status;
     });
+  }
+
+  public async findAllDefectedAnswers(scope?: ScopeType): Promise<Answer[]> {
+    const lastInspectionMap = await this.generateLastInspectionMap(scope);
+    const lastInspections = [...lastInspectionMap.values()];
+
+    return lastInspections
+      .flatMap((inspection) => inspection.answers)
+      .filter((answer) => {
+        return (
+          answer.status === StatusEnum.ERROR ||
+          answer.status === StatusEnum.WARNING
+        );
+      });
   }
 }
