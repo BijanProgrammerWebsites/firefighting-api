@@ -17,6 +17,7 @@ import {
 } from "../shared/utils/time.utils";
 import { OverdueItemType } from "../dashboard/types/overdue-item.type";
 import { DefectsBySeverityType } from "../dashboard/types/defects-by-severity.type";
+import { EquipmentsByStatusType } from "../dashboard/types/equipments-by-status.type";
 
 @Injectable()
 export class QueryService {
@@ -236,5 +237,21 @@ export class QueryService {
       .getOne();
 
     return oldestDefect ? -1 * calculateDiffDays(oldestDefect.createdDate) : 0;
+  }
+
+  public async groupEquipmentsByStatus(
+    scope?: ScopeType,
+  ): Promise<EquipmentsByStatusType> {
+    const result = await this.equipmentRepo
+      .createQueryBuilder("equipment")
+      .whereScope(scope)
+      .select('equipment."status"', "status")
+      .addSelect('COUNT(equipment."id")', "count")
+      .groupBy('equipment."status"')
+      .getRawMany<{ status: EquipmentStatusEnum; count: number }>();
+
+    return Object.fromEntries(
+      result.map((item) => [item.status, item.count]),
+    ) as EquipmentsByStatusType;
   }
 }

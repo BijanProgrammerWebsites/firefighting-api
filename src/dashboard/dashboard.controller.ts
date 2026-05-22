@@ -42,4 +42,13 @@ export class DashboardController {
   ) {
     return this.dashboardService.defectsAging({ siteId, zoneId, unitId });
   }
+
+  @Get("equipments-by-status")
+  public equipmentsByStatus(
+    @Query("siteId") siteId?: string,
+    @Query("zoneId") zoneId?: string,
+    @Query("unitId") unitId?: string,
+  ) {
+    return this.dashboardService.equipmentsByStatus({ siteId, zoneId, unitId });
+  }
 }

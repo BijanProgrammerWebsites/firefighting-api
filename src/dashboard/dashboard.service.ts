@@ -1,8 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
 import { ResponseDto } from "../shared/dto/response.dto";
-import { Equipment } from "../equipments/entities/equipment.entity";
 import { KpiType } from "./types/kpi.type";
 import { QueryService } from "../query/query.service";
 import { EquipmentStatusEnum } from "../shared/enums/equipment-status.enum";
@@ -11,6 +8,7 @@ import { DefectSeverityEnum } from "../shared/enums/defect-severity.enum";
 import { OverdueItemType } from "./types/overdue-item.type";
 import { DefectsBySeverityType } from "./types/defects-by-severity.type";
 import { DefectsAgingType } from "./types/defects-aging.type";
+import { EquipmentsByStatusType } from "./types/equipments-by-status.type";
 
 @Injectable()
 export class DashboardService {
@@ -87,6 +85,18 @@ export class DashboardService {
         averageDaysOpen,
         oldestDaysOpen,
       },
+    };
+  }
+
+  public async equipmentsByStatus(
+    scope: ScopeType,
+  ): Promise<ResponseDto<EquipmentsByStatusType>> {
+    const equipmentsByStatus =
+      await this.queryService.groupEquipmentsByStatus(scope);
+
+    return {
+      message: "اطلاعات با موفقیت دریافت شد.",
+      result: equipmentsByStatus,
     };
   }
 }
