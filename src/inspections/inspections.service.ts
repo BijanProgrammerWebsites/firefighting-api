@@ -4,7 +4,6 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { CreateInspectionDto } from "./dto/create-inspection.dto";
-import { UpdateInspectionDto } from "./dto/update-inspection.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Inspection } from "./entities/inspection.entity";
 import { Repository } from "typeorm";
@@ -12,17 +11,22 @@ import { ResponseDto } from "../shared/dto/response.dto";
 import { EquipmentsService } from "../equipments/equipments.service";
 import { Answer } from "../answers/entities/answer.entity";
 import { Question } from "../questions/entities/question.entity";
-import { StatusEnum } from "../shared/enums/status.enum";
+import { Defect } from "../defects/entities/defect.entity";
+import { Equipment } from "../equipments/entities/equipment.entity";
 
 @Injectable()
 export class InspectionsService {
   public constructor(
     @InjectRepository(Inspection)
     private readonly inspectionRepo: Repository<Inspection>,
-    @InjectRepository(Answer)
-    private readonly answerRepo: Repository<Answer>,
     @InjectRepository(Question)
     private readonly questionRepo: Repository<Question>,
+    @InjectRepository(Answer)
+    private readonly answerRepo: Repository<Answer>,
+    @InjectRepository(Defect)
+    private readonly defectRepo: Repository<Defect>,
+    @InjectRepository(Equipment)
+    private readonly equipmentRepo: Repository<Equipment>,
     private readonly equipmentsService: EquipmentsService,
   ) {}
 
@@ -39,37 +43,39 @@ export class InspectionsService {
 
     const inspection = this.inspectionRepo.create({
       equipment,
+      status: dto.status,
       answers: [],
     });
 
-    if (dto.answers?.length) {
-      for (const answerDto of dto.answers) {
-        const question = await this.questionRepo.findOne({
-          where: { id: answerDto.questionId },
-        });
+    for (const answerDto of dto.answers) {
+      const question = await this.questionRepo.findOne({
+        where: { id: answerDto.questionId },
+      });
 
-        if (!question) {
-          throw new NotFoundException("سؤال پیدا نشد.");
-        }
-
-        const answer = this.answerRepo.create({
-          status: answerDto.status,
-          text: answerDto.text,
-          picture: answerDto.picture ?? null,
-          question,
-        });
-
-        inspection.answers.push(answer);
+      if (!question) {
+        throw new NotFoundException("سؤال پیدا نشد.");
       }
+
+      const answer = this.answerRepo.create({
+        text: answerDto.text,
+        picture: answerDto.picture ?? null,
+        question,
+      });
+
+      if (answerDto.severity) {
+        answer.defect = this.defectRepo.create({
+          severity: answerDto.severity,
+          equipment,
+        });
+      }
+
+      inspection.answers.push(answer);
     }
 
-    const { status, score } = this.calculateInspectionStatusAndScore(
-      inspection.answers,
-    );
-    inspection.status = status;
-    inspection.score = score;
-
     const createdInspection = await this.inspectionRepo.save(inspection);
+
+    equipment.status = inspection.status;
+    await this.equipmentRepo.save(equipment);
 
     return {
       message: "بازرسی با موفقیت ایجاد شد.",
@@ -90,6 +96,15 @@ export class InspectionsService {
   }
 
   public async findOne(id: string): Promise<ResponseDto<Inspection>> {
+    const inspection = await this.getInspectionOrFail(id);
+
+    return {
+      message: "بازرسی با موفقیت دریافت شد.",
+      result: inspection,
+    };
+  }
+
+  private async getInspectionOrFail(id: string): Promise<Inspection> {
     const inspection = await this.inspectionRepo.findOne({
       where: { id },
       relations: ["equipment", "answers", "answers.question"],
@@ -99,137 +114,6 @@ export class InspectionsService {
       throw new NotFoundException("بازرسی پیدا نشد.");
     }
 
-    return {
-      message: "بازرسی با موفقیت دریافت شد.",
-      result: inspection,
-    };
-  }
-
-  public async update(
-    id: string,
-    dto: UpdateInspectionDto,
-  ): Promise<ResponseDto> {
-    const inspection = await this.getInspectionOrFail(id);
-
-    if (dto.equipmentId) {
-      const equipmentResponse = await this.equipmentsService.findOne(
-        dto.equipmentId,
-      );
-
-      if ("error" in equipmentResponse) {
-        throw new InternalServerErrorException(equipmentResponse.error);
-      }
-
-      const { result: equipment } = equipmentResponse;
-      inspection.equipment = equipment;
-    }
-
-    if (dto.answers) {
-      const existingAnswers = await this.answerRepo.find({
-        where: { inspection: { id } as any },
-      });
-
-      if (existingAnswers.length) {
-        await this.answerRepo.remove(existingAnswers);
-      }
-
-      const answers: Answer[] = [];
-
-      if (dto.answers.length) {
-        for (const answerDto of dto.answers) {
-          const question = await this.questionRepo.findOne({
-            where: { id: answerDto.questionId },
-          });
-
-          if (!question) {
-            throw new NotFoundException("سؤال پیدا نشد.");
-          }
-
-          const answer = this.answerRepo.create({
-            status: answerDto.status,
-            text: answerDto.text,
-            picture: answerDto.picture ?? null,
-            inspection,
-            question,
-          });
-
-          answers.push(answer);
-        }
-      }
-
-      const { status, score } = this.calculateInspectionStatusAndScore(answers);
-      inspection.status = status;
-      inspection.score = score;
-
-      await this.answerRepo.save(answers);
-    }
-
-    await this.inspectionRepo.save(inspection);
-
-    return { message: "بازرسی با موفقیت به‌روزرسانی شد." };
-  }
-
-  public async remove(id: string): Promise<ResponseDto> {
-    const inspection = await this.getInspectionOrFail(id);
-
-    const existingAnswers = await this.answerRepo.find({
-      where: { inspection: { id } as any },
-    });
-
-    if (existingAnswers.length) {
-      await this.answerRepo.remove(existingAnswers);
-    }
-
-    await this.inspectionRepo.remove(inspection);
-
-    return { message: "بازرسی با موفقیت حذف شد." };
-  }
-
-  private async getInspectionOrFail(id: string): Promise<Inspection> {
-    const inspection = await this.inspectionRepo.findOne({
-      where: { id },
-      relations: ["equipment"],
-    });
-
-    if (!inspection) {
-      throw new NotFoundException("بازرسی پیدا نشد.");
-    }
-
     return inspection;
-  }
-
-  private calculateInspectionStatusAndScore(answers: Answer[]): {
-    status: StatusEnum;
-    score: number;
-  } {
-    if (!answers.length) {
-      return { status: StatusEnum.OK, score: 0 };
-    }
-
-    let hasError = false;
-    let hasWarning = false;
-    let rawScore = 0;
-
-    for (const answer of answers) {
-      if (answer.status === StatusEnum.ERROR) {
-        hasError = true;
-      } else if (answer.status === StatusEnum.WARNING) {
-        hasWarning = true;
-        rawScore += 0.5;
-      } else if (answer.status === StatusEnum.OK) {
-        rawScore += 1;
-      }
-    }
-
-    const status = hasError
-      ? StatusEnum.ERROR
-      : hasWarning
-        ? StatusEnum.WARNING
-        : StatusEnum.OK;
-
-    const maxScore = answers.length;
-    const normalizedScore = maxScore > 0 ? (rawScore / maxScore) * 100 : 0;
-
-    return { status, score: normalizedScore };
   }
 }

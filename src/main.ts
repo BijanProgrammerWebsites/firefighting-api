@@ -15,6 +15,8 @@ import { AppModule } from "./app.module";
 
 import { ValidationExceptionFilter } from "./validation.filter";
 
+import "./typeorm/extensions/scope-query-builder";
+
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 

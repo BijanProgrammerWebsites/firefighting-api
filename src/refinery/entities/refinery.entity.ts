@@ -9,7 +9,7 @@ export class Refinery {
   @Column("text")
   title: string;
 
-  @Column("text", { nullable: true })
+  @Column("text", { nullable: true, default: null })
   picture: string | null;
 
   @OneToMany(() => Site, (site) => site.refinery)

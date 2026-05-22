@@ -23,6 +23,17 @@ export class RefineryService {
     };
   }
 
+  public async findDetailed(): Promise<ResponseDto<Refinery>> {
+    const [refinery] = await this.refineryRepo.find({
+      relations: { sites: { zones: { units: true } } },
+    });
+
+    return {
+      message: "جزئیات پالایشگاه با موفقیت دریافت شد.",
+      result: refinery,
+    };
+  }
+
   public async updateTheOnlyOne(dto: UpdateRefineryDto): Promise<ResponseDto> {
     const [refinery] = await this.refineryRepo.find();
 

@@ -7,10 +7,11 @@ import { Answer } from "../answers/entities/answer.entity";
 import { Equipment } from "../equipments/entities/equipment.entity";
 import { Question } from "../questions/entities/question.entity";
 import { EquipmentsModule } from "../equipments/equipments.module";
+import { Defect } from "../defects/entities/defect.entity";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Inspection, Answer, Equipment, Question]),
+    TypeOrmModule.forFeature([Inspection, Answer, Equipment, Question, Defect]),
     EquipmentsModule,
   ],
   controllers: [InspectionsController],

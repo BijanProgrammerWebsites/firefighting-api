@@ -1,20 +1,24 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  type Relation,
+} from "typeorm";
 import { Inspection } from "../../inspections/entities/inspection.entity";
 import { Question } from "../../questions/entities/question.entity";
-import { StatusEnum } from "../../shared/enums/status.enum";
+import { Defect } from "../../defects/entities/defect.entity";
 
 @Entity()
 export class Answer {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column({ type: "enum", enum: StatusEnum })
-  status: StatusEnum;
-
   @Column("text")
   text: string;
 
-  @Column("text", { nullable: true })
+  @Column("text", { nullable: true, default: null })
   picture: string | null;
 
   @ManyToOne(() => Inspection, (inspection) => inspection.answers, {
@@ -24,4 +28,10 @@ export class Answer {
 
   @ManyToOne(() => Question, { onDelete: "CASCADE" })
   question: Question;
+
+  @OneToOne(() => Defect, (defect) => defect.answer, {
+    nullable: true,
+    cascade: true,
+  })
+  defect: Relation<Defect> | null;
 }

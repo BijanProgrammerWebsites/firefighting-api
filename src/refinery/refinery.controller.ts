@@ -18,7 +18,6 @@ import { Roles } from "../auth/decorators/roles.decorator";
 import { RoleEnum } from "../shared/enums/role.enum";
 
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(RoleEnum.ADMIN)
 @Controller("refinery")
 export class RefineryController {
   constructor(private readonly refineryService: RefineryService) {}
@@ -28,11 +27,18 @@ export class RefineryController {
     return this.refineryService.findTheOnlyOne();
   }
 
+  @Get("/detailed")
+  public findDetailed() {
+    return this.refineryService.findDetailed();
+  }
+
+  @Roles(RoleEnum.ADMIN)
   @Patch()
   public updateTheOnlyOne(@Body() dto: UpdateRefineryDto) {
     return this.refineryService.updateTheOnlyOne(dto);
   }
 
+  @Roles(RoleEnum.ADMIN)
   @Patch("picture")
   @UseInterceptors(FileInterceptor("picture"))
   public async updatePicture(@UploadedFile() file: Express.Multer.File) {
@@ -43,6 +49,7 @@ export class RefineryController {
     return this.refineryService.updatePicture(file.filename);
   }
 
+  @Roles(RoleEnum.ADMIN)
   @Delete("picture")
   public async removePicture() {
     return this.refineryService.removePicture();
