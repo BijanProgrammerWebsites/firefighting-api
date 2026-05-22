@@ -19,12 +19,15 @@ export function calculateNextInspectionDate(inspection: Inspection): Date {
 export function calculateDaysPassedSinceDeadline(
   inspection: Inspection,
 ): number {
+  const nextInspectionDate = calculateNextInspectionDate(inspection);
+  return calculateDiffDays(nextInspectionDate);
+}
+
+export function calculateDiffDays(date: Date): number {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const nextInspectionDate = calculateNextInspectionDate(inspection);
-
-  const diffMilliseconds = nextInspectionDate.getTime() - today.getTime();
+  const diffMilliseconds = date.getTime() - today.getTime();
 
   return Math.floor(diffMilliseconds / MS_PER_DAY);
 }

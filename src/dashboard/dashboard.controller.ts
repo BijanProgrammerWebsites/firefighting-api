@@ -33,4 +33,13 @@ export class DashboardController {
   ) {
     return this.dashboardService.defectsBySeverity({ siteId, zoneId, unitId });
   }
+
+  @Get("defects-aging")
+  public defectsAging(
+    @Query("siteId") siteId?: string,
+    @Query("zoneId") zoneId?: string,
+    @Query("unitId") unitId?: string,
+  ) {
+    return this.dashboardService.defectsAging({ siteId, zoneId, unitId });
+  }
 }

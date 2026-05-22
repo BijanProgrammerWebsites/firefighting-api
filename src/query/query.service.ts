@@ -12,6 +12,7 @@ import { DefectStatusEnum } from "../shared/enums/defect-status.enum";
 import { DefectSeverityEnum } from "../shared/enums/defect-severity.enum";
 import {
   calculateDaysPassedSinceDeadline,
+  calculateDiffDays,
   calculateNextInspectionDate,
 } from "../shared/utils/time.utils";
 import { OverdueItemType } from "../dashboard/types/overdue-item.type";
@@ -179,7 +180,6 @@ export class QueryService {
       .createQueryBuilder("defect")
       .select('defect."severity"')
       .addSelect('COUNT(defect."id")')
-      .leftJoin("defect.equipment", "equipment")
       .where('defect."equipmentId" IN (:...equipmentIds)', { equipmentIds })
       .andWhere('defect."status" <> :status', {
         status: DefectStatusEnum.CLOSED,
@@ -190,5 +190,51 @@ export class QueryService {
     return Object.fromEntries(
       result.map((item) => [item.severity, item.count]),
     ) as DefectsBySeverityType;
+  }
+
+  public async calculateDefectsAverageDaysOpen(
+    scope?: ScopeType,
+  ): Promise<number> {
+    const equipments = await this.equipmentRepo.find({
+      where: generateScopeWhereClause(scope),
+    });
+
+    const equipmentIds = equipments.map((e) => e.id);
+
+    const result = await this.defectRepo
+      .createQueryBuilder("defect")
+      .select(
+        'AVG(EXTRACT(EPOCH FROM (NOW() - defect."createdDate")) / 86400)',
+        "averageDaysOpen",
+      )
+      .where('defect."equipmentId" IN (:...equipmentIds)', { equipmentIds })
+      .andWhere('defect."status" <> :status', {
+        status: DefectStatusEnum.CLOSED,
+      })
+      .getRawOne<{ averageDaysOpen: number }>();
+
+    return Math.floor(result?.averageDaysOpen ?? 0);
+  }
+
+  public async calculateDefectsOldestDaysOpen(
+    scope?: ScopeType,
+  ): Promise<number> {
+    const equipments = await this.equipmentRepo.find({
+      where: generateScopeWhereClause(scope),
+    });
+
+    const equipmentIds = equipments.map((e) => e.id);
+
+    const oldestDefect = await this.defectRepo
+      .createQueryBuilder("defect")
+      .where('defect."equipmentId" IN (:...equipmentIds)', { equipmentIds })
+      .andWhere('defect."status" <> :status', {
+        status: DefectStatusEnum.CLOSED,
+      })
+      .orderBy('defect."createdDate"', "ASC")
+      .take(1)
+      .getOne();
+
+    return oldestDefect ? -1 * calculateDiffDays(oldestDefect.createdDate) : 0;
   }
 }

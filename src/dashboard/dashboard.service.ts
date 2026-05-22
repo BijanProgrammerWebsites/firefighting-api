@@ -10,14 +10,11 @@ import { ScopeType } from "../shared/types/scope.type";
 import { DefectSeverityEnum } from "../shared/enums/defect-severity.enum";
 import { OverdueItemType } from "./types/overdue-item.type";
 import { DefectsBySeverityType } from "./types/defects-by-severity.type";
+import { DefectsAgingType } from "./types/defects-aging.type";
 
 @Injectable()
 export class DashboardService {
-  public constructor(
-    @InjectRepository(Equipment)
-    private equipmentRepo: Repository<Equipment>,
-    private readonly queryService: QueryService,
-  ) {}
+  public constructor(private readonly queryService: QueryService) {}
 
   public async kpi(scope: ScopeType): Promise<ResponseDto<KpiType>> {
     const totalEquipments = await this.queryService.findTotalEquipments(scope);
@@ -72,6 +69,24 @@ export class DashboardService {
     return {
       message: "اطلاعات با موفقیت دریافت شد.",
       result: defectsBySeverity,
+    };
+  }
+
+  public async defectsAging(
+    scope: ScopeType,
+  ): Promise<ResponseDto<DefectsAgingType>> {
+    const averageDaysOpen =
+      await this.queryService.calculateDefectsAverageDaysOpen(scope);
+
+    const oldestDaysOpen =
+      await this.queryService.calculateDefectsOldestDaysOpen(scope);
+
+    return {
+      message: "اطلاعات با موفقیت دریافت شد.",
+      result: {
+        averageDaysOpen,
+        oldestDaysOpen,
+      },
     };
   }
 }
