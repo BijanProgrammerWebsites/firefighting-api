@@ -9,6 +9,7 @@ import { OverdueItemType } from "./types/overdue-item.type";
 import { DefectsBySeverityType } from "./types/defects-by-severity.type";
 import { DefectsAgingType } from "./types/defects-aging.type";
 import { EquipmentsByStatusType } from "./types/equipments-by-status.type";
+import { Equipment } from "../equipments/entities/equipment.entity";
 
 @Injectable()
 export class DashboardService {
@@ -97,6 +98,18 @@ export class DashboardService {
     return {
       message: "اطلاعات با موفقیت دریافت شد.",
       result: equipmentsByStatus,
+    };
+  }
+
+  public async criticalEquipments(
+    scope: ScopeType,
+  ): Promise<ResponseDto<Equipment[]>> {
+    const criticalEquipments =
+      await this.queryService.findCriticalEquipments(scope);
+
+    return {
+      message: "اطلاعات با موفقیت دریافت شد.",
+      result: criticalEquipments,
     };
   }
 }

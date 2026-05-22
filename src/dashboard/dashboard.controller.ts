@@ -51,4 +51,13 @@ export class DashboardController {
   ) {
     return this.dashboardService.equipmentsByStatus({ siteId, zoneId, unitId });
   }
+
+  @Get("critical-equipments")
+  public criticalEquipments(
+    @Query("siteId") siteId?: string,
+    @Query("zoneId") zoneId?: string,
+    @Query("unitId") unitId?: string,
+  ) {
+    return this.dashboardService.criticalEquipments({ siteId, zoneId, unitId });
+  }
 }

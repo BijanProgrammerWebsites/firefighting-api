@@ -133,7 +133,7 @@ export class QueryService {
     return await this.equipmentRepo.find({
       relations: ["template"],
       order: { position: "ASC" },
-      where: [generateScopeWhereClause(scope), { status }],
+      where: { ...generateScopeWhereClause(scope), status },
     });
   }
 
@@ -253,5 +253,22 @@ export class QueryService {
     return Object.fromEntries(
       result.map((item) => [item.status, item.count]),
     ) as EquipmentsByStatusType;
+  }
+
+  public async findCriticalEquipments(scope?: ScopeType): Promise<Equipment[]> {
+    return await this.equipmentRepo.find({
+      relations: ["template", "defects"],
+      order: { position: "ASC" },
+      where: [
+        {
+          ...generateScopeWhereClause(scope),
+          status: EquipmentStatusEnum.OUT_OF_SERVICE,
+        },
+        {
+          ...generateScopeWhereClause(scope),
+          defects: { severity: DefectSeverityEnum.CRITICAL },
+        },
+      ],
+    });
   }
 }
