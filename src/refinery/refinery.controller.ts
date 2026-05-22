@@ -17,7 +17,6 @@ import { RolesGuard } from "../auth/guards/roles.guard";
 import { Roles } from "../auth/decorators/roles.decorator";
 import { RoleEnum } from "../shared/enums/role.enum";
 
-@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller("refinery")
 export class RefineryController {
   constructor(private readonly refineryService: RefineryService) {}
@@ -27,17 +26,20 @@ export class RefineryController {
     return this.refineryService.findTheOnlyOne();
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get("/detailed")
   public findDetailed() {
     return this.refineryService.findDetailed();
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RoleEnum.ADMIN)
   @Patch()
   public updateTheOnlyOne(@Body() dto: UpdateRefineryDto) {
     return this.refineryService.updateTheOnlyOne(dto);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RoleEnum.ADMIN)
   @Patch("picture")
   @UseInterceptors(FileInterceptor("picture"))
@@ -49,6 +51,7 @@ export class RefineryController {
     return this.refineryService.updatePicture(file.filename);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RoleEnum.ADMIN)
   @Delete("picture")
   public async removePicture() {
