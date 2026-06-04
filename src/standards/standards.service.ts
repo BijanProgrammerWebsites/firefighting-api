@@ -11,6 +11,7 @@ import { Repository } from "typeorm";
 import { Question } from "../questions/entities/question.entity";
 import { ResponseDto } from "../shared/dto/response.dto";
 import { Template } from "../templates/entities/template.entity";
+import { User } from "../users/entities/user.entity";
 
 @Injectable()
 export class StandardsService {
@@ -23,9 +24,13 @@ export class StandardsService {
     private readonly templateRepo: Repository<Template>,
   ) {}
 
-  public async create(dto: CreateStandardDto): Promise<ResponseDto<string>> {
+  public async create(
+    dto: CreateStandardDto,
+    signedInUser: User,
+  ): Promise<ResponseDto<string>> {
     const standard = await this.standardRepo.save({
       title: dto.title,
+      createdBy: signedInUser,
     });
 
     if (dto.questions?.length) {
@@ -43,7 +48,7 @@ export class StandardsService {
 
   public async findAll(): Promise<ResponseDto<Standard[]>> {
     const standards = await this.standardRepo.find({
-      relations: ["questions"],
+      relations: ["questions", "createdBy", "updatedBy"],
       order: { title: "ASC" },
     });
 
@@ -65,6 +70,7 @@ export class StandardsService {
   public async update(
     id: string,
     dto: UpdateStandardDto,
+    signedInUser: User,
   ): Promise<ResponseDto> {
     const standard = await this.getStandardOrFail(id);
 
@@ -72,6 +78,7 @@ export class StandardsService {
       standard.title = dto.title;
     }
 
+    standard.updatedBy = signedInUser;
     await this.standardRepo.save(standard);
 
     if (dto.questions) {
@@ -122,8 +129,8 @@ export class StandardsService {
 
   private async getStandardOrFail(id: string): Promise<Standard> {
     const standard = await this.standardRepo.findOne({
+      relations: ["questions", "createdBy", "updatedBy"],
       where: { id },
-      relations: ["questions"],
     });
 
     if (!standard) {

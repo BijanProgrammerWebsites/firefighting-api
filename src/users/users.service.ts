@@ -56,8 +56,8 @@ export class UsersService {
 
   public async findAll(): Promise<ResponseDto<SafeUser[]>> {
     const users = await this.userRepo.find({
-      order: { username: "ASC" },
       relations: ["createdBy", "updatedBy"],
+      order: { username: "ASC" },
     });
 
     return {
