@@ -47,6 +47,8 @@ export class AuthService {
 
     await this.generateTokensAndSetCookies(foundUser, res);
 
+    await this.userRepo.update(foundUser.id, { lastSignInDate: new Date() });
+
     const { password: _1, refreshToken: _2, ...safeUser } = foundUser;
 
     return {
