@@ -55,10 +55,21 @@ export class UsersService {
   }
 
   public async findAll(): Promise<ResponseDto<SafeUser[]>> {
-    const users = await this.userRepo.find({
-      relations: ["createdBy", "updatedBy"],
-      order: { username: "ASC" },
-    });
+    const users = await this.userRepo
+      .createQueryBuilder("user")
+      .leftJoinAndSelect("user.createdBy", "createdBy")
+      .leftJoinAndSelect("user.updatedBy", "updatedBy")
+      .orderBy(
+        `CASE 
+          WHEN user.role = 'admin' THEN 1
+          WHEN user.role = 'inspector' THEN 2
+          WHEN user.role = 'viewer' THEN 3
+          ELSE 4
+        END`,
+        "ASC",
+      )
+      .addOrderBy("user.createdDate", "ASC")
+      .getMany();
 
     return {
       message: "کاربران با موفقیت دریافت شدند.",

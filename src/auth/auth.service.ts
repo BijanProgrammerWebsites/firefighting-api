@@ -131,6 +131,7 @@ export class AuthService {
   private generateAccessToken(user: User): string {
     const payload: JwtPayloadType = {
       sub: user.id,
+      fullName: user.fullName,
       username: user.username,
       role: user.role,
     };
@@ -141,6 +142,7 @@ export class AuthService {
   private generateRefreshToken(user: User): string {
     const payload: JwtPayloadType = {
       sub: user.id,
+      fullName: user.fullName,
       username: user.username,
       role: user.role,
     };

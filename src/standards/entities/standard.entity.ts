@@ -29,10 +29,10 @@ export class Standard {
   updatedDate: Date;
 
   @ManyToOne(() => User, { nullable: true })
-  @Transform(({ value }) => (value ? value.username : null))
+  @Transform(({ value }) => (value ? value.fullName : null))
   createdBy: User | null;
 
   @ManyToOne(() => User, { nullable: true })
-  @Transform(({ value }) => (value ? value.username : null))
+  @Transform(({ value }) => (value ? value.fullName : null))
   updatedBy: User | null;
 }

@@ -15,6 +15,9 @@ export class User {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
+  @Column("text")
+  fullName: string;
+
   @Column("text", { unique: true })
   username: string;
 
@@ -36,11 +39,11 @@ export class User {
   updatedDate: Date;
 
   @ManyToOne(() => User, { nullable: true })
-  @Transform(({ value }) => (value ? value.username : null))
+  @Transform(({ value }) => (value ? value.fullName : null))
   createdBy: User | null;
 
   @ManyToOne(() => User, { nullable: true })
-  @Transform(({ value }) => (value ? value.username : null))
+  @Transform(({ value }) => (value ? value.fullName : null))
   updatedBy: User | null;
 
   @Column("timestamptz", { nullable: true, default: null })
