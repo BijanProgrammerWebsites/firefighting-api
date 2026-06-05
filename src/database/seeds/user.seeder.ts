@@ -11,7 +11,7 @@ export class UserSeeder implements Seeder {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash("1234", salt);
 
-    await repo.save([
+    const users = repo.create([
       {
         fullName: "محمدامین شاکری",
         username: "admin",
@@ -31,5 +31,12 @@ export class UserSeeder implements Seeder {
         role: RoleEnum.VIEWER,
       },
     ]);
+
+    users.forEach((user) => {
+      user.createdBy = users[0];
+      user.updatedBy = users[0];
+    });
+
+    await repo.save(users);
   }
 }
