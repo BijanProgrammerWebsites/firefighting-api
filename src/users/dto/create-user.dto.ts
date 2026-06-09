@@ -6,6 +6,11 @@ export class CreateUserDto {
   @IsString()
   @Trim()
   @IsNotEmpty()
+  fullName: string;
+
+  @IsString()
+  @Trim()
+  @IsNotEmpty()
   username: string;
 
   @IsString()

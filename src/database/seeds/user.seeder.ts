@@ -11,14 +11,32 @@ export class UserSeeder implements Seeder {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash("1234", salt);
 
-    await repo.save([
-      { username: "admin", password: hashedPassword, role: RoleEnum.ADMIN },
+    const users = repo.create([
       {
+        fullName: "محمدامین شاکری",
+        username: "admin",
+        password: hashedPassword,
+        role: RoleEnum.ADMIN,
+      },
+      {
+        fullName: "مسعود سعادتمند",
         username: "inspector",
         password: hashedPassword,
         role: RoleEnum.INSPECTOR,
       },
-      { username: "viewer", password: hashedPassword, role: RoleEnum.VIEWER },
+      {
+        fullName: "مرتضی فکوری",
+        username: "viewer",
+        password: hashedPassword,
+        role: RoleEnum.VIEWER,
+      },
     ]);
+
+    users.forEach((user) => {
+      user.createdBy = users[0];
+      user.updatedBy = users[0];
+    });
+
+    await repo.save(users);
   }
 }

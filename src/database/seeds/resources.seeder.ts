@@ -13,9 +13,12 @@ import { Unit } from "../../units/entities/unit.entity";
 import { Zone } from "../../zones/entities/zone.entity";
 import { EquipmentStatusEnum } from "../../shared/enums/equipment-status.enum";
 import { DefectSeverityEnum } from "../../shared/enums/defect-severity.enum";
+import { User } from "../../users/entities/user.entity";
+import { RoleEnum } from "../../shared/enums/role.enum";
 
 export class ResourcesSeeder implements Seeder {
   async run(dataSource: DataSource) {
+    const userRepo = dataSource.getRepository(User);
     const answerRepo = dataSource.getRepository(Answer);
     const inspectionRepo = dataSource.getRepository(Inspection);
     const equipmentRepo = dataSource.getRepository(Equipment);
@@ -23,16 +26,29 @@ export class ResourcesSeeder implements Seeder {
     const zoneRepo = dataSource.getRepository(Zone);
     const siteRepo = dataSource.getRepository(Site);
     const refineryRepo = dataSource.getRepository(Refinery);
-
     const templateRepo = dataSource.getRepository(Template);
     const questionRepo = dataSource.getRepository(Question);
     const standardRepo = dataSource.getRepository(Standard);
 
+    const admin = await userRepo.findOneBy({ role: RoleEnum.ADMIN });
+
     // --- Standards, templates, questions ---
     const standards = await standardRepo.save([
-      { title: "کپسول‌های آتش‌نشانی" },
-      { title: "هیدرانت‌ها و قرقره‌های شیلنگ" },
-      { title: "خروجی‌های اضطراری و علائم" },
+      {
+        title: "کپسول‌های آتش‌نشانی",
+        createdBy: admin,
+        updatedBy: admin,
+      },
+      {
+        title: "هیدرانت‌ها و قرقره‌های شیلنگ",
+        createdBy: admin,
+        updatedBy: admin,
+      },
+      {
+        title: "خروجی‌های اضطراری و علائم",
+        createdBy: admin,
+        updatedBy: admin,
+      },
     ]);
 
     const [extinguishersStd, hydrantsStd, exitsStd] = standards;

@@ -47,6 +47,8 @@ export class AuthService {
 
     await this.generateTokensAndSetCookies(foundUser, res);
 
+    await this.userRepo.update(foundUser.id, { lastSignInDate: new Date() });
+
     const { password: _1, refreshToken: _2, ...safeUser } = foundUser;
 
     return {
@@ -129,6 +131,7 @@ export class AuthService {
   private generateAccessToken(user: User): string {
     const payload: JwtPayloadType = {
       sub: user.id,
+      fullName: user.fullName,
       username: user.username,
       role: user.role,
     };
@@ -139,6 +142,7 @@ export class AuthService {
   private generateRefreshToken(user: User): string {
     const payload: JwtPayloadType = {
       sub: user.id,
+      fullName: user.fullName,
       username: user.username,
       role: user.role,
     };

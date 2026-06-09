@@ -25,7 +25,10 @@ export class UsersService {
     private userRepo: Repository<User>,
   ) {}
 
-  public async create(dto: CreateUserDto): Promise<ResponseDto<string>> {
+  public async create(
+    dto: CreateUserDto,
+    signedInUser: User,
+  ): Promise<ResponseDto<string>> {
     const { username, password } = dto;
 
     const foundUser = await this.userRepo.findOne({
@@ -42,6 +45,7 @@ export class UsersService {
     const createdUser = await this.userRepo.save({
       ...dto,
       password: hashedPassword,
+      createdBy: signedInUser,
     });
 
     return {
@@ -51,7 +55,21 @@ export class UsersService {
   }
 
   public async findAll(): Promise<ResponseDto<SafeUser[]>> {
-    const users = await this.userRepo.find({ order: { username: "ASC" } });
+    const users = await this.userRepo
+      .createQueryBuilder("user")
+      .leftJoinAndSelect("user.createdBy", "createdBy")
+      .leftJoinAndSelect("user.updatedBy", "updatedBy")
+      .orderBy(
+        `CASE 
+          WHEN user.role = 'admin' THEN 1
+          WHEN user.role = 'inspector' THEN 2
+          WHEN user.role = 'viewer' THEN 3
+          ELSE 4
+        END`,
+        "ASC",
+      )
+      .addOrderBy("user.createdDate", "ASC")
+      .getMany();
 
     return {
       message: "کاربران با موفقیت دریافت شدند.",
@@ -68,7 +86,11 @@ export class UsersService {
     };
   }
 
-  public async update(id: string, dto: UpdateUserDto): Promise<ResponseDto> {
+  public async update(
+    id: string,
+    dto: UpdateUserDto,
+    signedInUser: User,
+  ): Promise<ResponseDto> {
     const user = await this.getUserOrFail(id);
     const updatedUser = assignDefinedValues(user, dto);
 
@@ -77,6 +99,7 @@ export class UsersService {
       updatedUser.password = await bcrypt.hash(dto.password, salt);
     }
 
+    updatedUser.updatedBy = signedInUser;
     await this.userRepo.save(updatedUser);
 
     return { message: "کاربر با موفقیت به‌روزرسانی شد." };
@@ -89,18 +112,19 @@ export class UsersService {
   }
 
   public me(user: User): ResponseDto<SafeUser> {
+    const { password: _1, refreshToken: _2, ...safeUser } = user;
+
     return {
       message: "کاربر با موفقیت دریافت شد.",
-      result: {
-        id: user.id,
-        username: user.username,
-        role: user.role,
-      },
+      result: safeUser,
     };
   }
 
   private async getUserOrFail(id: string): Promise<User> {
-    const user = await this.userRepo.findOne({ where: { id } });
+    const user = await this.userRepo.findOne({
+      where: { id },
+      relations: ["createdBy", "updatedBy"],
+    });
 
     if (!user) {
       throw new NotFoundException("کاربر پیدا نشد.");
